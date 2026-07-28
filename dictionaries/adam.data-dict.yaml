@@ -24,7 +24,9 @@ details: >-
   (see relationships/conflicts). Treatment arm is ACTARM (actual) on every
   table; ARM is the planned arm -- use ACTARM for as-treated analyses. adae and
   adex have one row per event/parameter, so count patients with
-  COUNT(DISTINCT USUBJID), not COUNT(*).
+  COUNT(DISTINCT USUBJID), not COUNT(*). Variables follow CDISC ADaM/SDTM
+  conventions; adverse events are MedDRA-coded and NCI-CTCAE-graded, with
+  seriousness per ICH E2A and analysis populations per ICH E9.
 
 tables:
   - name: adsl
