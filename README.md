@@ -99,3 +99,20 @@ measures/measures.R        the validated measures (tern/rtables -> tidy)
 context/*.md               analysis populations, AE conventions, study notes
 system-prompt.md           analyst persona and tool-ordering guidance
 ```
+
+## License and attribution
+
+The code original to this repository is licensed under the MIT License (see
+[`LICENSE`](LICENSE)).
+
+The measures in `measures/` and the graph conventions in `context/graphs.md`
+reproduce or adapt recipes from the
+[insightsengineering/tlg-catalog](https://github.com/insightsengineering/tlg-catalog),
+which is © 2023 F. Hoffmann-La Roche AG and licensed under the
+[Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+Each measure's `@provenance` tag pins the exact catalog source file and commit
+it was extracted from. See [`NOTICE`](NOTICE) for the full attribution.
+
+Sample data comes from
+[`random.cdisc.data`](https://insightsengineering.github.io/random.cdisc.data/)
+(synthetic CDISC ADaM datasets, no real patient data).

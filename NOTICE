@@ -1,0 +1,22 @@
+tlgagent
+Copyright (c) 2026 posit-dev
+
+This product includes materials adapted from the TLG Catalog:
+
+    NEST TLG Catalog (Tables, Listings, and Graphs)
+    https://github.com/insightsengineering/tlg-catalog
+    Copyright 2023 F. Hoffmann-La Roche AG
+    Licensed under the Apache License, Version 2.0.
+
+The validated measures in measures/tables.R and measures/listings.R, and the
+graph conventions in context/graphs.md, reproduce or adapt code examples from
+that catalog (the tern / rtables TLG recipes). Each measure carries an
+@provenance tag pinning the exact catalog source file and commit it was
+extracted from (commit b3019fec92280384bac322680face57b2f685bfc).
+
+A copy of the Apache License, Version 2.0 is available at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+The tlgagent code that is original to this repository is licensed under the
+MIT License; see the LICENSE file.
