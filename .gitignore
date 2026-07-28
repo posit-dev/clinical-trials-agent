@@ -47,3 +47,13 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# macOS
+.DS_Store
+
+# shinychat cache
+.shinychat/
+
+# local DuckDB materializations
+*.duckdb
+*.duckdb.wal

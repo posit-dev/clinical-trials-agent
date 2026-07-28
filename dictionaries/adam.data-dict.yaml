@@ -1,0 +1,569 @@
+$version: 0.1.0
+$learn_more: http://data-dict.tidyverse.org/
+
+name: adam
+label: Study ADaM datasets
+description: >-
+  CDISC ADaM analysis datasets for a single simulated oncology study with three
+  treatment arms (A: Drug X, B: Placebo, C: Combination), from
+  random.cdisc.data. Three tables: subject level (adsl, one row per patient),
+  adverse events (adae, one row per AE record), and drug exposure (adex, one row
+  per exposure parameter per patient). For standard safety, disposition,
+  exposure, and demography summaries, prefer the validated measures in the
+  semantic layer; use SQL over these tables for ad-hoc questions the measures do
+  not cover.
+details: >-
+  Rules that span the tables. Analysis population is defined on adsl by SAFFL
+  (safety) and ITTFL (intent-to-treat); in this simulated study every subject is
+  in both. Adverse-event summaries are computed on adae records with
+  ANL01FL = 'Y' (the analysis-record flag) -- always apply that for AE
+  questions. adae and adex both join to adsl on USUBJID and each carries a
+  denormalized copy of many adsl subject-level fields (demographics, arm, flags,
+  biomarkers); those copies are the same value repeated on every child row, so
+  read them directly rather than joining back to adsl, and never join on them
+  (see relationships/conflicts). Treatment arm is ACTARM (actual) on every
+  table; ARM is the planned arm -- use ACTARM for as-treated analyses. adae and
+  adex have one row per event/parameter, so count patients with
+  COUNT(DISTINCT USUBJID), not COUNT(*).
+
+tables:
+  - name: adsl
+    label: Subject-Level Analysis Dataset
+    description: >-
+      One row per subject. Demographics, treatment assignment, analysis
+      population flags, disposition, and death information.
+    columns:
+      - name: USUBJID
+        label: Unique Subject Identifier
+        type: string
+        constraints: [primary_key]
+        examples: ["AB12345-CHN-1-id-307", "AB12345-USA-1-id-42"]
+      - name: SUBJID
+        label: Subject Identifier for the Study
+        type: string
+        display: restricted
+        examples: ["id-307", "id-42"]
+      - name: SITEID
+        label: Study Site Identifier
+        type: string
+        examples: ["CHN-1", "USA-1", "BRA-11"]
+      - name: INVID
+        label: Investigator Identifier
+        type: string
+        display: restricted
+        examples: ["INV-1", "INV-2"]
+      - name: INVNAM
+        label: Investigator Name
+        type: string
+        display: restricted
+        examples: ["Dr. A", "Dr. B"]
+      - name: AGE
+        label: Age
+        type: number(quantity)
+        units: years
+        range: [20, 69]
+      - name: SEX
+        label: Sex
+        type: enum
+        values: {F: Female, M: Male}
+      - name: RACE
+        label: Race
+        type: enum
+        values:
+          - AMERICAN INDIAN OR ALASKA NATIVE
+          - ASIAN
+          - BLACK OR AFRICAN AMERICAN
+          - MULTIPLE
+          - NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER
+          - WHITE
+      - name: ETHNIC
+        label: Ethnicity
+        type: enum
+        values: [HISPANIC OR LATINO, NOT HISPANIC OR LATINO, NOT REPORTED, UNKNOWN]
+      - name: COUNTRY
+        label: Country
+        type: enum
+        values: [BRA, CAN, CHN, GBR, JPN, NGA, PAK, RUS, USA]
+      - name: REGION1
+        label: Geographic Region 1
+        type: enum
+        values: [Africa, Asia, Eurasia, Europe, North America, South America]
+      - name: ARM
+        label: Description of Planned Arm
+        type: enum
+        values: ["A: Drug X", "B: Placebo", "C: Combination"]
+        details: Planned arm. Use ACTARM for as-treated (safety) analyses.
+      - name: ACTARM
+        label: Description of Actual Arm
+        type: enum
+        values: ["A: Drug X", "B: Placebo", "C: Combination"]
+        details: Actual treatment received; the standard column for tabulating by arm.
+      - name: ARMCD
+        label: Planned Arm Code
+        type: enum
+        values: ["ARM A", "ARM B", "ARM C"]
+      - name: ACTARMCD
+        label: Actual Arm Code
+        type: enum
+        values: ["ARM A", "ARM B", "ARM C"]
+      - name: TRT01A
+        label: Actual Treatment for Period 01
+        type: enum
+        values: ["A: Drug X", "B: Placebo", "C: Combination"]
+        details: Period-01 actual treatment; equals ACTARM in this single-period study.
+      - name: STRATA1
+        label: Stratification Factor 1
+        type: enum
+        values: [A, B, C]
+      - name: STRATA2
+        label: Stratification Factor 2
+        type: enum
+        values: [S1, S2]
+      - name: BMRKR1
+        label: Continuous Level Biomarker 1
+        type: number(quantity)
+        range: [0.2, 21.4]
+      - name: BMRKR2
+        label: Categorical Level Biomarker 2
+        type: enum
+        values: [LOW, MEDIUM, HIGH]
+      - name: SAFFL
+        label: Safety Population Flag
+        type: enum
+        values: {Y: "In safety population", N: "Not in safety population"}
+      - name: ITTFL
+        label: Intent-To-Treat Population Flag
+        type: enum
+        values: {Y: "In ITT population", N: "Not in ITT population"}
+      - name: BMEASIFL
+        label: Response Evaluable Population Flag
+        type: enum
+        values: {Y: "Response evaluable", N: "Not response evaluable"}
+      - name: BEP01FL
+        label: Biomarker Evaluable Population Flag
+        type: enum
+        values: {Y: "Biomarker evaluable", N: "Not biomarker evaluable"}
+      - name: AEWITHFL
+        label: AE Leading to Drug Withdrawal Flag
+        type: enum
+        values: {Y: "Had an AE leading to drug withdrawal", N: "Did not"}
+      - name: EOSSTT
+        label: End of Study Status
+        type: enum
+        values: [COMPLETED, ONGOING, DISCONTINUED]
+      - name: EOTSTT
+        label: End of Treatment Status
+        type: enum
+        values: [COMPLETED, ONGOING, DISCONTINUED]
+        details: >-
+          KNOWN DATA ISSUE (simulated data): EOTSTT is an exact copy of EOSSTT
+          here, so it carries no distinct information. Do not treat it as a
+          separate end-of-treatment status.
+      - name: DCSREAS
+        label: Reason for Discontinuation from Study
+        type: enum
+        values:
+          - ADVERSE EVENT
+          - DEATH
+          - LACK OF EFFICACY
+          - PHYSICIAN DECISION
+          - PROTOCOL VIOLATION
+          - WITHDRAWAL BY PARENT/GUARDIAN
+          - WITHDRAWAL BY SUBJECT
+        details: Populated only for discontinued subjects (EOSSTT = 'DISCONTINUED').
+      - name: EOSDT
+        label: End of Study Date
+        type: date
+        range: [2022-02-12, 2024-02-18]
+      - name: EOSDY
+        label: End of Study Relative Day
+        type: number(ordinal)
+        range: [369, 1096]
+      - name: DTHFL
+        label: Subject Death Flag
+        type: enum
+        values: {Y: Died, N: Alive}
+      - name: DTHDT
+        label: Date of Death
+        type: date
+        range: [2022-02-14, 2022-04-10]
+      - name: DTHCAUS
+        label: Cause of Death
+        type: enum
+        values:
+          - ADVERSE EVENT
+          - DISEASE PROGRESSION
+          - LOST TO FOLLOW UP
+          - MISSING
+          - Post-study reporting of death
+          - SUICIDE
+          - UNKNOWN
+      - name: DTHCAT
+        label: Cause of Death Category
+        type: enum
+        values: [ADVERSE EVENT, PROGRESSIVE DISEASE, OTHER]
+      - name: LSTALVDT
+        label: Date Last Known Alive
+        type: date
+        range: [2022-02-14, 2024-03-07]
+      - name: RANDDT
+        label: Date of Randomization
+        type: date
+        range: [2019-02-22, 2021-02-14]
+      - name: TRTSDTM
+        label: Datetime of First Exposure to Treatment
+        type: datetime
+        time_zone: UTC
+        range: [2019-02-24T00:00:00, 2021-02-17T23:59:59]
+      - name: TRTEDTM
+        label: Datetime of Last Exposure to Treatment
+        type: datetime
+        time_zone: UTC
+        range: [2022-02-12T00:00:00, 2024-02-18T23:59:59]
+    definitions:
+      - name: safety_population
+        type: boolean
+        description: Subjects in the safety analysis population.
+        expr: SAFFL = 'Y'
+      - name: itt_population
+        type: boolean
+        description: Subjects in the intent-to-treat analysis population.
+        expr: ITTFL = 'Y'
+      - name: discontinued
+        type: boolean
+        description: Subjects who discontinued the study.
+        expr: EOSSTT = 'DISCONTINUED'
+
+  - name: adae
+    label: Adverse Events Analysis Dataset
+    description: >-
+      One row per adverse-event record, MedDRA-coded, with severity,
+      seriousness, causality, action taken, and outcome. Filter to ANL01FL = 'Y'
+      for analysis. Carries denormalized subject-level fields from adsl.
+    columns:
+      - name: USUBJID
+        label: Unique Subject Identifier
+        type: string
+        constraints: [foreign_key]
+        examples: ["AB12345-CHN-1-id-307", "AB12345-USA-1-id-42"]
+      - name: AESEQ
+        label: Sponsor-Defined Identifier
+        type: number(id)
+        examples: [1, 2, 3, 4, 5]
+      - name: AETERM
+        label: Reported Term for the Adverse Event
+        type: string
+        examples: ["trm A.1.1.1.1", "trm B.2.1.2.1"]
+      - name: AEDECOD
+        label: Dictionary-Derived Term (MedDRA Preferred Term, PT)
+        type: string
+        examples: ["dcd A.1.1.1.1", "dcd B.2.1.2.1"]
+        details: 10 preferred terms in this simulated dataset.
+      - name: AEHLT
+        label: High Level Term (MedDRA HLT)
+        type: string
+        examples: ["hlt A.1.1.1", "hlt B.2.1.2"]
+      - name: AELLT
+        label: Lowest Level Term (MedDRA LLT)
+        type: string
+        examples: ["llt A.1.1.1.1", "llt B.2.1.2.1"]
+      - name: AEBODSYS
+        label: Body System or Organ Class (MedDRA SOC used for tabulation)
+        type: enum
+        values: ["cl A.1", "cl B.1", "cl B.2", "cl C.1", "cl C.2", "cl D.1", "cl D.2"]
+        details: >-
+          The system-organ-class level used in AE-by-SOC tables. Distinct from
+          AESOC (primary SOC); AEBODSYS is the tabulation variable.
+      - name: AESOC
+        label: Primary System Organ Class
+        type: enum
+        values: ["cl A", "cl B", "cl C", "cl D"]
+      - name: AESEV
+        label: Severity/Intensity
+        type: enum
+        values: [MILD, MODERATE, SEVERE]
+        details: Clinical intensity; distinct from seriousness (AESER) and grade (AETOXGR).
+      - name: AETOXGR
+        label: Analysis Toxicity Grade (NCI-CTCAE)
+        type: enum
+        values:
+          "1": Grade 1 (mild)
+          "2": Grade 2 (moderate)
+          "3": Grade 3 (severe)
+          "4": Grade 4 (life-threatening)
+          "5": Grade 5 (death)
+        details: Grade 3-5 is the usual "high grade" cutoff.
+      - name: AESER
+        label: Serious Event
+        type: enum
+        values: {Y: Serious, N: "Not serious"}
+        details: >-
+          Met a regulatory seriousness criterion (see the AES* criterion flags).
+          A serious event is not necessarily severe (AESEV), and vice versa.
+      - name: AEREL
+        label: Analysis Causality (Related to Study Treatment)
+        type: enum
+        values: {Y: Related, N: "Not related"}
+      - name: AEACN
+        label: Action Taken With Study Treatment
+        type: enum
+        values:
+          - DOSE NOT CHANGED
+          - DOSE INCREASED
+          - DOSE REDUCED
+          - DOSE RATE REDUCED
+          - DRUG INTERRUPTED
+          - DRUG WITHDRAWN
+          - NOT APPLICABLE
+          - NOT EVALUABLE
+          - UNKNOWN
+        details: >-
+          In this simulated dataset, action-taken counts (e.g. drug withdrawal,
+          dose modification) may not reconcile with study-level disposition
+          (adsl DCSREAS); interpret AEACN-derived withdrawal/dose-modification
+          figures with caution.
+      - name: AEOUT
+        label: Outcome of Adverse Event
+        type: enum
+        values:
+          - RECOVERED/RESOLVED
+          - RECOVERING/RESOLVING
+          - RECOVERED/RESOLVED WITH SEQUELAE
+          - NOT RECOVERED/NOT RESOLVED
+          - FATAL
+          - UNKNOWN
+      - name: AESDTH
+        label: Results in Death
+        type: enum
+        values: {Y: "AE resulted in death", N: "Did not"}
+        details: >-
+          KNOWN DATA ISSUE (simulated data): not consistent with mortality --
+          it flags more patients with a fatal AE than there are deaths (DTHFL),
+          so it is unreliable. Do not use for fatal-AE analysis. The AE overview
+          measure omits fatal-AE rows for this reason.
+      - name: AESHOSP
+        label: Requires or Prolongs Hospitalization
+        type: enum
+        values: {Y: "Yes", N: "No"}
+        details: A seriousness criterion (contributes to AESER = 'Y').
+      - name: AESLIFE
+        label: Is Life Threatening
+        type: enum
+        values: {Y: "Yes", N: "No"}
+        details: A seriousness criterion.
+      - name: AESDISAB
+        label: Persist or Significant Disability/Incapacity
+        type: enum
+        values: {Y: "Yes", N: "No"}
+        details: A seriousness criterion.
+      - name: AESCONG
+        label: Congenital Anomaly or Birth Defect
+        type: enum
+        values: {Y: "Yes", N: "No"}
+        details: A seriousness criterion.
+      - name: AESMIE
+        label: Other Medically Important Serious Event
+        type: enum
+        values: {Y: "Yes", N: "No"}
+        details: A seriousness criterion.
+      - name: AECONTRT
+        label: Concomitant or Additional Treatment Given
+        type: enum
+        values: {Y: "Yes", N: "No"}
+      - name: TRTEMFL
+        label: Treatment Emergent Analysis Flag
+        type: enum
+        values: {Y: "Treatment-emergent"}
+        details: >-
+          AE with onset on/after first dose. In this dataset all analysis
+          records are treatment-emergent.
+      - name: ANL01FL
+        label: Analysis Record Flag
+        type: enum
+        values: {Y: "Analysis record"}
+        details: >-
+          Blank for non-analysis records. All AE summary tables filter to
+          ANL01FL = 'Y'.
+      - name: ASTDY
+        label: Analysis Start Relative Day
+        type: number(ordinal)
+        range: [0, 1094]
+        details: Study day of AE onset (day 1 = first dose).
+      - name: AENDY
+        label: Analysis End Relative Day
+        type: number(ordinal)
+        range: [5, 1096]
+      - name: SMQ01NAM
+        label: Standardised MedDRA Query 01 Name
+        type: string
+        examples: ["C.1.1.1.3/B.2.2.3.1 AESI"]
+        details: >-
+          AE-of-special-interest basket membership (a standardised MedDRA
+          query). Blank when the event is not in the basket. SMQ02NAM and
+          CQ01NAM are further baskets, mostly empty here.
+      - name: SMQ01SC
+        label: SMQ 01 Scope
+        type: enum
+        values: [BROAD, NARROW]
+    definitions:
+      - name: analysis_records
+        type: boolean
+        description: >-
+          Adverse-event analysis records (ANL01FL). AE summary tables are
+          computed on these; apply this filter for any ad-hoc AE query.
+        expr: ANL01FL = 'Y'
+      - name: treatment_emergent
+        type: boolean
+        description: Treatment-emergent adverse events (onset on/after first dose).
+        expr: TRTEMFL = 'Y'
+      - name: serious
+        type: boolean
+        description: Serious adverse events.
+        expr: AESER = 'Y'
+      - name: related
+        type: boolean
+        description: Adverse events related to study treatment.
+        expr: AEREL = 'Y'
+
+  - name: adex
+    label: Exposure Analysis Dataset
+    description: >-
+      One row per exposure parameter per subject (BDS structure). Dose and
+      number-of-doses parameters, for overall and individual dosing periods.
+      Carries denormalized subject-level fields from adsl.
+    columns:
+      - name: USUBJID
+        label: Unique Subject Identifier
+        type: string
+        constraints: [foreign_key]
+        examples: ["AB12345-CHN-1-id-307", "AB12345-USA-1-id-42"]
+      - name: PARAMCD
+        label: Parameter Code
+        type: enum
+        values:
+          TDOSE: Total dose administered
+          TNDOSE: Total number of doses administered
+          DOSE: Dose administered during constant dosing interval
+          NDOSE: Number of doses administered during constant dosing interval
+      - name: PARAM
+        label: Parameter
+        type: string
+        examples: ["Total dose administered", "Total number of doses administered"]
+      - name: PARCAT1
+        label: Parameter Category (Individual/Overall)
+        type: enum
+        values: [OVERALL, INDIVIDUAL]
+        details: Exposure summary tables use PARCAT1 = 'OVERALL'.
+      - name: PARCAT2
+        label: Parameter Category (Drug)
+        type: enum
+        values: [Drug A, Drug B]
+      - name: AVAL
+        label: Analysis Value
+        type: number(quantity)
+        range: [1, 9360]
+        details: >-
+          Unit depends on the parameter (see AVALU): dose parameters (TDOSE,
+          DOSE) are in mg; count parameters (TNDOSE, NDOSE) are counts. Do not
+          pool AVAL across parameters.
+      - name: AVALU
+        label: Analysis Value Unit
+        type: enum
+        values: [mg]
+        details: Blank for count parameters (TNDOSE, NDOSE); 'mg' for dose parameters.
+      - name: AVISIT
+        label: Analysis Visit
+        type: string
+        examples: [BASELINE, SCREENING, "WEEK 1 DAY 8", "WEEK 2 DAY 15"]
+      - name: EXROUTE
+        label: Route of Administration
+        type: enum
+        values: [INTRAVENOUS, SUBCUTANEOUS]
+      - name: EXDOSFRQ
+        label: Dosing Frequency per Interval
+        type: enum
+        values: [ONCE]
+      - name: TRTSDT
+        label: Date of First Exposure to Treatment
+        type: date
+        range: [2019-02-24, 2021-02-17]
+      - name: TRTEDT
+        label: Date of Last Exposure to Treatment
+        type: date
+        range: [2019-04-01, 2021-03-25]
+    definitions:
+      - name: overall_exposure
+        type: boolean
+        description: Overall (not per-interval) exposure parameter records.
+        expr: PARCAT1 = 'OVERALL'
+
+relationships:
+  - join: adae.USUBJID = adsl.USUBJID
+    cardinality: many-to-one
+    description: >-
+      Each adverse-event record belongs to one subject. adae already carries
+      denormalized copies of the adsl columns below, so read them from adae
+      directly rather than joining.
+    conflicts:
+      - SEX
+      - RACE
+      - ETHNIC
+      - COUNTRY
+      - REGION1
+      - ARM
+      - ARMCD
+      - ACTARM
+      - ACTARMCD
+      - TRT01A
+      - STRATA1
+      - STRATA2
+      - BMRKR1
+      - BMRKR2
+      - SAFFL
+      - ITTFL
+      - AGE
+      - DTHFL
+      - SITEID
+      - INVID
+      - INVNAM
+  - join: adex.USUBJID = adsl.USUBJID
+    cardinality: many-to-one
+    description: >-
+      Each exposure record belongs to one subject. adex carries denormalized
+      copies of the adsl columns below; read them from adex directly.
+    conflicts:
+      - SEX
+      - RACE
+      - ETHNIC
+      - COUNTRY
+      - REGION1
+      - ARM
+      - ARMCD
+      - ACTARM
+      - ACTARMCD
+      - TRT01A
+      - STRATA1
+      - STRATA2
+      - BMRKR1
+      - BMRKR2
+      - SAFFL
+      - ITTFL
+      - AGE
+      - DTHFL
+
+glossary:
+  analysis population: >-
+    The set of subjects included in an analysis, defined by a flag on adsl.
+    Safety (SAFFL) is the usual population for adverse-event and exposure
+    tables; intent-to-treat (ITTFL) for efficacy.
+  treatment-emergent: >-
+    An adverse event with onset on or after the first dose of study treatment
+    (TRTEMFL = 'Y'). AE tables analyze the treatment-emergent analysis records
+    (ANL01FL = 'Y').
+  serious versus severe: >-
+    Seriousness (AESER) is a regulatory status met via criteria such as death,
+    hospitalization, or life-threatening events; severity (AESEV) is clinical
+    intensity (mild/moderate/severe). They are independent.
+  SOC: MedDRA System Organ Class, the broad level of the AE coding hierarchy (AEBODSYS).
+  preferred term: MedDRA Preferred Term (AEDECOD), the specific AE term below the SOC.
+  grade: NCI-CTCAE toxicity grade (AETOXGR), 1 (mild) to 5 (death); 3-5 is the usual high-grade cutoff.

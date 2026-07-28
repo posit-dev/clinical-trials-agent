@@ -1,0 +1,29 @@
+Package: tlgagent
+Title: A commons Example Agent for Clinical-Trial TLG
+Version: 0.0.0.9000
+Description: A publicly available example of a commons self-service data
+    agent for the pharma clinical-trials space. It answers safety and
+    compliance questions about a study by running validated Tables,
+    Listings, and Graphs recipes from the insightsengineering/tlg-catalog
+    over CDISC ADaM sample data from random.cdisc.data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Imports:
+    bslib,
+    commons,
+    DBI,
+    dplyr,
+    duckdb,
+    ellmer,
+    glue,
+    random.cdisc.data,
+    rtables,
+    shiny,
+    shinychat,
+    tern,
+    yaml
+Suggests:
+    otelsdk
+Remotes:
+    posit-dev/commons@definitions-6,
+    posit-dev/shinychat/pkg-r
