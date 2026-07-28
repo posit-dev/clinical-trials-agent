@@ -15,9 +15,7 @@ tlg_agent <- commons(
     )
   ),
   semantic_layer = semantic_layer("measures"),
-  context_layer = context_layer(
-    files = list.files("context", pattern = "[.]md$", full.names = TRUE)
-  ),
+  context_layer = context_layer(list.files("context", full.names = TRUE)),
   system_prompt = ellmer::interpolate_file("system-prompt.md", date = Sys.Date()),
   log = TRUE
 )
