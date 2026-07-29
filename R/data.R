@@ -7,7 +7,9 @@ adam_data <- local({
       cache <<- list(
         adsl = random.cdisc.data::cadsl,
         adae = random.cdisc.data::cadae,
-        adex = random.cdisc.data::cadex
+        adex = random.cdisc.data::cadex,
+        adlb = random.cdisc.data::cadlb,
+        adaette = random.cdisc.data::cadaette
       )
     }
     cache
