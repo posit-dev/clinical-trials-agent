@@ -1,0 +1,5 @@
+.claude
+*.duckdb
+*.duckdb.wal
+.Rprofile
+renv
