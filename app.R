@@ -44,7 +44,11 @@ ui <- page_navbar(
 )
 
 server <- function(input, output, session) {
-  commons_server("chat", tlg_agent)
+  commons_server(
+    "chat",
+    tlg_agent,
+    history = shinychat::history_options(store = "memory")
+  )
 }
 
 shinyApp(ui, server)
