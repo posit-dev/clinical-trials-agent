@@ -5,24 +5,22 @@ provenance: tlg-catalog graph conventions (BWG01 box plot) + house-style plottin
 # Plotting (graphs)
 
 When a chart communicates the answer better than a table, render one with
-`run_r`; plots are shown to the user. These are **rendering recipes** — the
-governed numbers still come from a measure or a filtered query; the plot is a
-presentation of them, so treat a chart as no more trusted than the data behind
-it.
+`run_r`; plots are shown to the user. A chart is presentation — treat it as no
+more trusted than the data behind it.
 
-General flow: get the data first (a measure via `call_measure`, or a
-`run_sql` query using the governed filters), which is stored under a handle
-(`r1`, `r2`, ...); then call `run_r` on that handle to draw a `ggplot2` figure.
-Create at most one figure per `run_r` call.
+Flow: get the data first (call a relevant measure, or run a query that applies
+the governed population/analysis definitions as `{{name}}` tokens), which is
+stored under a handle (`r1`, `r2`, ...); then call `run_r` on that handle to
+draw a `ggplot2` figure. One figure per `run_r` call.
+
+The recipes below assume the plotting data is in `r1`; each notes the shape it
+expects.
 
 ## Adverse events by system organ class
 
-Patients with at least one analysis AE, by SOC and arm.
+Data: one row per arm × SOC, with a patient count `n_pt` (analysis records).
 
 ```r
-# r1 <- run_sql:
-#   SELECT ACTARM, AEBODSYS, COUNT(DISTINCT USUBJID) AS n_pt
-#   FROM adae WHERE {{analysis_records}} GROUP BY ACTARM, AEBODSYS
 library(ggplot2)
 ggplot(r1, aes(x = reorder(AEBODSYS, n_pt), y = n_pt, fill = ACTARM)) +
   geom_col(position = "dodge") +
@@ -33,12 +31,9 @@ ggplot(r1, aes(x = reorder(AEBODSYS, n_pt), y = n_pt, fill = ACTARM)) +
 
 ## Study drug exposure by arm
 
-Distribution of total dose per patient, by arm (box plot; cf. tlg-catalog
-BWG01).
+Data: total dose per patient — `AVAL` for `PARAMCD = 'TDOSE'`, `PARCAT1 = 'OVERALL'` — with `ACTARM`.
 
 ```r
-# r1 <- run_sql:
-#   SELECT ACTARM, AVAL FROM adex WHERE PARCAT1 = 'OVERALL' AND PARAMCD = 'TDOSE'
 library(ggplot2)
 ggplot(r1, aes(x = ACTARM, y = AVAL, fill = ACTARM)) +
   geom_boxplot() +
@@ -49,8 +44,9 @@ ggplot(r1, aes(x = ACTARM, y = AVAL, fill = ACTARM)) +
 
 ## Age distribution by arm
 
+Data: `AGE` and `ACTARM`, one row per subject.
+
 ```r
-# r1 <- run_sql:  SELECT ACTARM, AGE FROM adsl WHERE {{safety_population}}
 library(ggplot2)
 ggplot(r1, aes(x = ACTARM, y = AGE, fill = ACTARM)) +
   geom_boxplot() +
@@ -59,10 +55,39 @@ ggplot(r1, aes(x = ACTARM, y = AGE, fill = ACTARM)) +
   theme(legend.position = "none")
 ```
 
+## Laboratory values: distribution by arm
+
+Data: `AVAL` and `ACTARM` for one lab test (`PARAMCD`, e.g. `'ALT'`) at one
+visit (`AVISIT`); label the axis with the parameter and its unit (`AVALU`). (cf. catalog BWG01.)
+
+```r
+library(ggplot2)
+ggplot(r1, aes(x = ACTARM, y = AVAL, fill = ACTARM)) +
+  geom_boxplot() +
+  labs(x = "Treatment arm", y = "ALT (U/L)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+## Laboratory values over time
+
+Data: mean `AVAL` per `AVISIT` × `ACTARM` for one lab test (order visits by
+`AVISITN`). (cf. catalog LTG01 / MNG01; `tern::g_lineplot` is the validated equivalent.)
+
+```r
+library(ggplot2)
+ggplot(r1, aes(x = reorder(AVISIT, AVISITN), y = mean_aval, colour = ACTARM, group = ACTARM)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Visit", y = "Mean ALT (U/L)", colour = "Arm") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
 ## Graphs that need data not loaded here
 
-The catalog's marquee graphs rely on `tern`'s validated `g_*` functions over
-datasets this agent does not currently expose, so they cannot be produced yet:
+The catalog's marquee graphs rely on `tern`'s `g_*` functions over datasets this
+agent does not currently expose, so they cannot be produced yet:
 
 - Kaplan-Meier survival curves (`tern::g_km`, catalog KMG01) — need a
   time-to-event dataset (ADTTE).

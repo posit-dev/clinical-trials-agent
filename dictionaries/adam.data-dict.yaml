@@ -499,6 +499,141 @@ tables:
         description: Overall (not per-interval) exposure parameter records.
         expr: PARCAT1 = 'OVERALL'
 
+  - name: adlb
+    label: Laboratory Analysis Dataset
+    description: >-
+      One row per laboratory measurement per subject per visit (BDS structure).
+      Analysis value with baseline, change, reference-range indicator, and
+      toxicity grade. Carries denormalized subject-level fields from adsl.
+    columns:
+      - name: USUBJID
+        label: Unique Subject Identifier
+        type: string
+        constraints: [foreign_key]
+        examples: ["AB12345-CHN-1-id-307", "AB12345-USA-1-id-42"]
+      - name: PARAMCD
+        label: Parameter Code
+        type: enum
+        values:
+          ALT: Alanine aminotransferase
+          CRP: C-reactive protein
+          IGA: Immunoglobulin A
+      - name: PARAM
+        label: Parameter
+        type: string
+        examples: ["Alanine Aminotransferase Measurement", "C-Reactive Protein Measurement", "Immunoglobulin A Measurement"]
+      - name: AVISIT
+        label: Analysis Visit
+        type: string
+        examples: [SCREENING, BASELINE, "WEEK 1 DAY 8", "WEEK 2 DAY 15", "WEEK 3 DAY 22"]
+      - name: AVAL
+        label: Analysis Value
+        type: number(quantity)
+        range: [0, 55]
+        details: Unit depends on the parameter (see AVALU).
+      - name: AVALU
+        label: Analysis Value Unit
+        type: enum
+        values: [U/L, mg/L, g/L]
+      - name: BASE
+        label: Baseline Value
+        type: number(quantity)
+        range: [0, 55]
+      - name: CHG
+        label: Change from Baseline
+        type: number(quantity)
+        range: [-48, 47]
+      - name: ANRIND
+        label: Analysis Reference Range Indicator
+        type: enum
+        values: [LOW, NORMAL, HIGH]
+        details: Where the analysis value falls relative to the normal range.
+      - name: BNRIND
+        label: Baseline Reference Range Indicator
+        type: enum
+        values: [LOW, NORMAL, HIGH]
+      - name: ANRLO
+        label: Analysis Normal Range Lower Limit
+        type: number(quantity)
+      - name: ANRHI
+        label: Analysis Normal Range Upper Limit
+        type: number(quantity)
+      - name: ATOXGR
+        label: Analysis Toxicity Grade (NCI-CTCAE, directional)
+        type: enum
+        values: ["-4", "-3", "-2", "-1", "0", "1", "2", "3", "4"]
+        details: >-
+          Signed NCI-CTCAE grade: negative = low-direction toxicity, positive =
+          high-direction, 0 = within normal limits.
+      - name: ABLFL
+        label: Baseline Record Flag
+        type: enum
+        values: {Y: "Baseline record"}
+      - name: ONTRTFL
+        label: On-Treatment Record Flag
+        type: enum
+        values: {Y: "On-treatment record"}
+    definitions:
+      - name: on_treatment
+        type: boolean
+        description: On-treatment laboratory records.
+        expr: ONTRTFL = 'Y'
+
+  - name: adaette
+    label: Time-to-Adverse-Event Analysis Dataset
+    description: >-
+      One row per subject per time-to-event parameter (BDS time-to-event
+      structure). Backs adverse-event rates adjusted for time at risk. Carries
+      denormalized subject-level fields from adsl.
+    columns:
+      - name: USUBJID
+        label: Unique Subject Identifier
+        type: string
+        constraints: [foreign_key]
+        examples: ["AB12345-CHN-1-id-307", "AB12345-USA-1-id-42"]
+      - name: PARAMCD
+        label: Parameter Code
+        type: enum
+        values:
+          AETTE1: Time to first occurrence of any adverse event
+          AETTE2: Time to first occurrence of any serious adverse event
+          AETTE3: Time to first occurrence of a grade 3-5 adverse event
+          AEREPTTE: Time to end of AE reporting period
+          AETOT1: Number of occurrences of any adverse event
+          AETOT2: Number of occurrences of any serious adverse event
+          AETOT3: Number of occurrences of a grade 3-5 adverse event
+          HYSTTEBL: Time to Hy's Law elevation vs baseline
+          HYSTTEUL: Time to Hy's Law elevation vs ULN
+        details: >-
+          Time parameters (AETTE*, *TTE*) carry time at risk in AVAL with
+          censoring in CNSR; count parameters (AETOT*) carry a count in AVAL.
+      - name: PARAM
+        label: Parameter
+        type: string
+        examples: ["Time to first occurrence of any adverse event"]
+      - name: AVAL
+        label: Analysis Value
+        type: number(quantity)
+        range: [0, .inf]
+        details: For time-to-event parameters, time at risk (unit in AVALU).
+      - name: AVALU
+        label: Analysis Value Unit
+        type: enum
+        values: [WEEKS, YEARS]
+      - name: CNSR
+        label: Censor
+        type: enum
+        values: {0: "Event occurred", 1: "Censored (no event observed)"}
+      - name: EVNTDESC
+        label: Event or Censoring Description
+        type: string
+        examples: ["Completion or Discontinuation", "End of AE Reporting Period"]
+    definitions:
+      - name: ae_event
+        type: boolean
+        description: Time-to-event records where the adverse event actually occurred (not censored).
+        expr: CNSR = 0
+
 relationships:
   - join: adae.USUBJID = adsl.USUBJID
     cardinality: many-to-one
@@ -533,6 +668,55 @@ relationships:
     description: >-
       Each exposure record belongs to one subject. adex carries denormalized
       copies of the adsl columns below; read them from adex directly.
+    conflicts:
+      - SEX
+      - RACE
+      - ETHNIC
+      - COUNTRY
+      - REGION1
+      - ARM
+      - ARMCD
+      - ACTARM
+      - ACTARMCD
+      - TRT01A
+      - STRATA1
+      - STRATA2
+      - BMRKR1
+      - BMRKR2
+      - SAFFL
+      - ITTFL
+      - AGE
+      - DTHFL
+  - join: adlb.USUBJID = adsl.USUBJID
+    cardinality: many-to-one
+    description: >-
+      Each laboratory record belongs to one subject. adlb carries denormalized
+      copies of the adsl columns below; read them from adlb directly.
+    conflicts:
+      - SEX
+      - RACE
+      - ETHNIC
+      - COUNTRY
+      - REGION1
+      - ARM
+      - ARMCD
+      - ACTARM
+      - ACTARMCD
+      - TRT01A
+      - STRATA1
+      - STRATA2
+      - BMRKR1
+      - BMRKR2
+      - SAFFL
+      - ITTFL
+      - AGE
+      - DTHFL
+  - join: adaette.USUBJID = adsl.USUBJID
+    cardinality: many-to-one
+    description: >-
+      Each time-to-event record belongs to one subject. adaette carries
+      denormalized copies of the adsl columns below; read them from adaette
+      directly.
     conflicts:
       - SEX
       - RACE

@@ -11,6 +11,8 @@ tlg_agent <- commons(
       adsl = adam$adsl,
       adae = adam$adae,
       adex = adam$adex,
+      adlb = adam$adlb,
+      adaette = adam$adaette,
       dictionary = "dictionaries/adam.data-dict.yaml"
     )
   ),
