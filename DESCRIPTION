@@ -16,6 +16,7 @@ Imports:
     duckdb,
     ellmer,
     glue,
+    markdown,
     random.cdisc.data,
     rtables,
     shiny,
