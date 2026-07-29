@@ -5,8 +5,7 @@ agent for clinical trials data. It answers questions about a
 simulated trials's safety, disposition, exposure, and demographics. As a commons agent, it first tries to answer user questions using validated code, called measures. For this agent, these measures are recipes from
 [insightsengineering/tlg-catalog](https://github.com/insightsengineering/tlg-catalog). 
 
-**Try it:** a published version runs on Posit Connect at
-<https://connect.posit.it/content/04ee623c-3daf-4893-989e-7be4f2c0e7a7/>.
+**[Try it out](https://connect.posit.it/content/04ee623c-3daf-4893-989e-7be4f2c0e7a7)** 
 
 ## Coverage
 
