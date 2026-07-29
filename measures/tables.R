@@ -238,16 +238,21 @@ demography <- function(population = c("SAF", "ITT"),
 #' Preferred Term (AEDECOD), by treatment arm plus an overall column: patients
 #' with at least one event and the total number of events, at both levels.
 #' Computed on analysis records (ANL01FL = 'Y'); empty rows pruned and rows
-#' sorted by frequency. Reproduces tlg-catalog AET02 (variants 1-2).
+#' sorted by frequency. Optionally restricted to preferred terms above an
+#' incidence threshold. Reproduces tlg-catalog AET02 (variants 1-2, 7).
 #'
 #' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
 #'   intent-to-treat (ITTFL). Defaults to safety.
+#' @param min_incidence `number` Keep only preferred terms that occur in at
+#'   least this fraction (0-1) of patients in at least one treatment arm (e.g.
+#'   0.05 for 5%). Omit to show all terms.
 #' @return A data frame with SOC and preferred-term rows (count and percentage
 #'   of patients, and event counts) and one column per treatment arm plus an
 #'   "All Patients" column.
 #' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet02.qmd
 #' @measure
 ae_by_soc_pt <- function(population = c("SAF", "ITT"),
+                         min_incidence = NULL,
                          adsl = adam_data()$adsl,
                          adae = adam_data()$adae) {
   adsl <- filter_population(adsl, population)
@@ -295,6 +300,14 @@ ae_by_soc_pt <- function(population = c("SAF", "ITT"),
     prune_table() %>%
     sort_at_path(path = "AEBODSYS", scorefun = cont_n_allcols) %>%
     sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = score_occurrences)
+
+  if (!is.null(min_incidence)) {
+    arms <- names(table(adsl$ACTARM))
+    result <- prune_table(
+      result,
+      keep_rows(has_fraction_in_any_col(atleast = min_incidence, col_names = arms))
+    )
+  }
 
   tidy_tlg(result)
 }
@@ -402,5 +415,427 @@ deaths <- function(population = c("SAF", "ITT"),
     analyze_vars(vars = "DTHCAT", var_labels = "Primary Cause of Death")
 
   result <- build_table(lyt, df = adsl)
+  tidy_tlg(result)
+}
+
+#' Laboratory abnormalities not present at baseline
+#'
+#' @description
+#' Count of patients with a post-baseline low or high laboratory abnormality
+#' (by reference-range indicator) that was not already abnormal at baseline, by
+#' treatment arm, for each laboratory test. On-treatment records only.
+#' Reproduces tlg-catalog LBT04.
+#'
+#' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
+#'   intent-to-treat (ITTFL). Defaults to safety.
+#' @return A data frame with low- and high-abnormality patient counts within
+#'   each laboratory test, and one column per treatment arm.
+#' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/lab-results/lbt04.qmd
+#' @measure
+lab_abnormalities <- function(population = c("SAF", "ITT"),
+                              adsl = adam_data()$adsl,
+                              adlb = adam_data()$adlb) {
+  adsl <- filter_population(adsl, population)
+  adlb <- dplyr::semi_join(adlb, adsl, by = "USUBJID")
+
+  adsl <- df_explicit_na(adsl)
+  adlb <- df_explicit_na(adlb) %>%
+    filter(ONTRTFL == "Y", ANRIND != "<Missing>") %>%
+    var_relabel(
+      PARAM = "Laboratory Test",
+      ANRIND = "Direction of Abnormality"
+    )
+
+  lyt <- basic_table(show_colcounts = TRUE) %>%
+    split_cols_by("ACTARM") %>%
+    split_rows_by(
+      "PARAM",
+      split_fun = drop_split_levels,
+      label_pos = "topleft",
+      split_label = obj_label(adlb$PARAM)
+    ) %>%
+    count_abnormal(
+      var = "ANRIND",
+      abnormal = list(Low = c("LOW", "LOW LOW"), High = c("HIGH", "HIGH HIGH")),
+      exclude_base_abn = TRUE
+    ) %>%
+    append_varlabels(adlb, "ANRIND", indent = 1L)
+
+  result <- build_table(lyt, df = adlb, alt_counts_df = adsl)
+  tidy_tlg(result)
+}
+
+#' Adverse events by greatest intensity
+#'
+#' @description
+#' Adverse-event incidence by greatest reported intensity, nested by MedDRA
+#' System Organ Class (AEBODSYS) then Preferred Term (AEDECOD), by treatment
+#' arm: for each term the number of patients with an event at each intensity
+#' (mild, moderate, severe) and at any intensity, counting each patient once at
+#' their greatest intensity. Computed on analysis records (ANL01FL = 'Y'); rows
+#' sorted by frequency. Reproduces tlg-catalog AET03, using the real severity
+#' column AESEV; the catalog's demonstration-only injection of a "life
+#' threatening" level is omitted.
+#'
+#' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
+#'   intent-to-treat (ITTFL). Defaults to safety.
+#' @return A data frame with an "Any Intensity" row and per-intensity rows
+#'   within each SOC and preferred term, and one column per treatment arm.
+#' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet03.qmd
+#' @measure
+ae_by_intensity <- function(population = c("SAF", "ITT"),
+                            adsl = adam_data()$adsl,
+                            adae = adam_data()$adae) {
+  adsl <- filter_population(adsl, population)
+  adae <- dplyr::semi_join(adae, adsl, by = "USUBJID")
+
+  adsl <- df_explicit_na(adsl)
+  adae <- df_explicit_na(adae) %>%
+    var_relabel(
+      AEBODSYS = "MedDRA System Organ Class",
+      AEDECOD = "MedDRA Preferred Term"
+    ) %>%
+    filter(ANL01FL == "Y") %>%
+    mutate(ASEV = factor(as.character(AESEV), levels = c("MILD", "MODERATE", "SEVERE")))
+
+  grade_groups <- list("- Any Intensity -" = c("MILD", "MODERATE", "SEVERE"))
+  split_fun <- trim_levels_in_group
+
+  lyt <- basic_table(show_colcounts = TRUE) %>%
+    split_cols_by("ACTARM") %>%
+    count_occurrences_by_grade(var = "ASEV", grade_groups = grade_groups) %>%
+    split_rows_by(
+      "AEBODSYS",
+      child_labels = "visible",
+      nested = TRUE,
+      split_fun = split_fun("ASEV"),
+      label_pos = "topleft",
+      split_label = obj_label(adae$AEBODSYS)
+    ) %>%
+    summarize_occurrences_by_grade(var = "ASEV", grade_groups = grade_groups) %>%
+    split_rows_by(
+      "AEDECOD",
+      child_labels = "visible",
+      nested = TRUE,
+      indent_mod = -1L,
+      split_fun = split_fun("ASEV"),
+      label_pos = "topleft",
+      split_label = obj_label(adae$AEDECOD)
+    ) %>%
+    summarize_num_patients(var = "USUBJID", .stats = "unique", .labels = c("- Any Intensity -")) %>%
+    count_occurrences_by_grade(var = "ASEV", .indent_mods = -1L) %>%
+    append_varlabels(adae, "AESEV", indent = 2L)
+
+  result <- build_table(lyt, adae, alt_counts_df = adsl) %>%
+    sort_at_path(path = "AEBODSYS", scorefun = cont_n_allcols, decreasing = TRUE) %>%
+    sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = cont_n_allcols, decreasing = TRUE)
+
+  tidy_tlg(result)
+}
+
+#' Most frequent adverse events by highest toxicity grade
+#'
+#' @description
+#' Adverse events reported in at least 10% of patients in any treatment arm,
+#' nested by MedDRA System Organ Class (AEBODSYS) then Preferred Term
+#' (AEDECOD), with treatment-arm columns further split by highest NCI-CTCAE
+#' toxicity grade group (any grade, grade 3-4, grade 5). Each patient is counted
+#' once per term at their maximum grade. Rows sorted by any-grade frequency.
+#' Reproduces tlg-catalog AET04_PI (variant 1).
+#'
+#' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
+#'   intent-to-treat (ITTFL). Defaults to safety.
+#' @return A data frame with SOC and preferred-term rows and one column per
+#'   treatment-arm-by-grade-group combination.
+#' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet04_pi.qmd
+#' @measure
+ae_frequent_by_grade <- function(population = c("SAF", "ITT"),
+                                 adsl = adam_data()$adsl,
+                                 adae = adam_data()$adae) {
+  adsl <- filter_population(adsl, population)
+  adae <- dplyr::semi_join(adae, adsl, by = "USUBJID")
+
+  adae_max <- adae %>%
+    group_by(ACTARM, USUBJID, AEBODSYS, AEDECOD) %>%
+    summarize(MAXAETOXGR = max(as.numeric(AETOXGR)), .groups = "drop") %>%
+    ungroup() %>%
+    mutate(
+      MAXAETOXGR = factor(MAXAETOXGR),
+      AEDECOD = droplevels(as.factor(AEDECOD))
+    )
+
+  adsl <- df_explicit_na(adsl)
+  adae_max <- df_explicit_na(adae_max)
+
+  grade_groups <- list(
+    "Any Grade (%)" = c("1", "2", "3", "4", "5"),
+    "Grade 3-4 (%)" = c("3", "4"),
+    "Grade 5 (%)" = "5"
+  )
+  col_counts <- rep(table(adsl$ACTARM), each = length(grade_groups))
+
+  criteria_fun <- function(tr) is(tr, "ContentRow")
+
+  full_table <- basic_table() %>%
+    split_cols_by("ACTARM") %>%
+    split_cols_by_groups("MAXAETOXGR", groups_list = grade_groups) %>%
+    split_rows_by(
+      "AEBODSYS",
+      child_labels = "visible", nested = FALSE, indent_mod = -1L,
+      split_fun = trim_levels_in_group("AEDECOD")
+    ) %>%
+    append_topleft("MedDRA System Organ Class") %>%
+    summarize_num_patients(
+      var = "USUBJID",
+      .stats = "unique",
+      .labels = "Total number of patients with at least one adverse event"
+    ) %>%
+    analyze_vars(
+      "AEDECOD",
+      na.rm = FALSE,
+      denom = "N_col",
+      .stats = "count_fraction",
+      .formats = c(count_fraction = format_fraction_threshold(0.01))
+    ) %>%
+    append_topleft("  MedDRA Preferred Term") %>%
+    build_table(adae_max, col_counts = col_counts) %>%
+    sort_at_path(
+      path = c("AEBODSYS"),
+      scorefun = score_occurrences_cont_cols(col_indices = c(1, 4, 7)),
+      decreasing = TRUE
+    ) %>%
+    sort_at_path(
+      path = c("AEBODSYS", "*", "AEDECOD"),
+      scorefun = score_occurrences_cols(col_indices = c(1, 4, 7)),
+      decreasing = TRUE
+    )
+
+  at_least_10percent_any <- has_fraction_in_any_col(atleast = 0.1, col_indices = c(1, 4, 7))
+
+  result <- full_table %>%
+    trim_rows(criteria = criteria_fun) %>%
+    prune_table(keep_rows(at_least_10percent_any))
+
+  tidy_tlg(result)
+}
+
+#' Adverse events by sex
+#'
+#' @description
+#' Adverse-event incidence nested by MedDRA System Organ Class (AEBODSYS) then
+#' Preferred Term (AEDECOD), with treatment-arm columns further split by sex:
+#' patients with at least one event and the total number of events, at both
+#' levels. Empty rows pruned and rows sorted by frequency. Reproduces
+#' tlg-catalog AET06 (variant 1, adverse events by sex).
+#'
+#' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
+#'   intent-to-treat (ITTFL). Defaults to safety.
+#' @return A data frame with SOC and preferred-term rows and one column per
+#'   treatment-arm-by-sex combination.
+#' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet06.qmd
+#' @measure
+ae_by_sex <- function(population = c("SAF", "ITT"),
+                      adsl = adam_data()$adsl,
+                      adae = adam_data()$adae) {
+  adsl <- filter_population(adsl, population)
+  adae <- dplyr::semi_join(adae, adsl, by = "USUBJID")
+
+  adsl <- df_explicit_na(adsl)
+  adae <- df_explicit_na(adae) %>%
+    var_relabel(
+      AEBODSYS = "MedDRA System Organ Class",
+      AEDECOD = "MedDRA Preferred Term"
+    )
+
+  split_fun <- drop_split_levels
+
+  lyt <- basic_table(show_colcounts = TRUE) %>%
+    split_cols_by("ACTARM") %>%
+    split_cols_by("SEX") %>%
+    analyze_num_patients(
+      vars = "USUBJID",
+      .stats = c("unique", "nonunique"),
+      .labels = c(
+        unique = "Total number of patients with at least one adverse event",
+        nonunique = "Overall total number of events"
+      )
+    ) %>%
+    split_rows_by(
+      "AEBODSYS",
+      child_labels = "visible",
+      nested = FALSE,
+      split_fun = split_fun,
+      label_pos = "topleft",
+      split_label = obj_label(adae$AEBODSYS)
+    ) %>%
+    summarize_num_patients(
+      var = "USUBJID",
+      .stats = c("unique", "nonunique"),
+      .labels = c(
+        unique = "Total number of patients with at least one adverse event",
+        nonunique = "Total number of events"
+      )
+    ) %>%
+    count_occurrences(vars = "AEDECOD", .indent_mods = -1L) %>%
+    append_varlabels(adae, "AEDECOD", indent = 1L)
+
+  result <- build_table(lyt, df = adae, alt_counts_df = adsl) %>%
+    prune_table() %>%
+    sort_at_path(path = c("AEBODSYS"), scorefun = cont_n_allcols) %>%
+    sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = score_occurrences)
+
+  tidy_tlg(result)
+}
+
+#' Adverse events related to study drug
+#'
+#' @description
+#' Incidence of adverse events assessed as related to study drug (AEREL = 'Y'),
+#' nested by MedDRA System Organ Class (AEBODSYS) then Preferred Term
+#' (AEDECOD), by treatment arm plus an overall column: patients with at least
+#' one related event and the total number of related events, at both levels.
+#' Empty rows pruned and rows sorted by frequency. Reproduces tlg-catalog AET09
+#' (variant 1).
+#'
+#' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
+#'   intent-to-treat (ITTFL). Defaults to safety.
+#' @return A data frame with SOC and preferred-term rows (count and percentage
+#'   of patients, and event counts) and one column per treatment arm plus an
+#'   "All Patients" column.
+#' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet09.qmd
+#' @measure
+ae_related <- function(population = c("SAF", "ITT"),
+                       adsl = adam_data()$adsl,
+                       adae = adam_data()$adae) {
+  adsl <- filter_population(adsl, population)
+  adae <- dplyr::semi_join(adae, adsl, by = "USUBJID")
+
+  adsl <- df_explicit_na(adsl)
+  adae <- df_explicit_na(adae) %>%
+    var_relabel(
+      AEBODSYS = "MedDRA System Organ Class",
+      AEDECOD = "MedDRA Preferred Term"
+    ) %>%
+    filter(AEREL == "Y")
+
+  split_fun <- drop_split_levels
+
+  lyt <- basic_table(show_colcounts = TRUE) %>%
+    split_cols_by("ACTARM") %>%
+    add_overall_col(label = "All Patients") %>%
+    analyze_num_patients(
+      vars = "USUBJID",
+      .stats = c("unique", "nonunique"),
+      .labels = c(
+        unique = "Total number of patients with at least one adverse event related to study drug",
+        nonunique = "Overall total number of events related to study drug"
+      )
+    ) %>%
+    split_rows_by(
+      "AEBODSYS",
+      child_labels = "visible",
+      nested = FALSE,
+      split_fun = split_fun,
+      label_pos = "topleft",
+      split_label = obj_label(adae$AEBODSYS)
+    ) %>%
+    summarize_num_patients(
+      var = "USUBJID",
+      .stats = c("unique", "nonunique"),
+      .labels = c(
+        unique = "Total number of patients with at least one adverse event related to study drug",
+        nonunique = "Total number of events related to study drug"
+      )
+    ) %>%
+    count_occurrences(vars = "AEDECOD", .indent_mods = -1L) %>%
+    append_varlabels(adae, "AEDECOD", indent = 1L)
+
+  result <- build_table(lyt, df = adae, alt_counts_df = adsl) %>%
+    prune_table() %>%
+    sort_at_path(path = c("AEBODSYS"), scorefun = cont_n_allcols) %>%
+    sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = score_occurrences)
+
+  tidy_tlg(result)
+}
+
+#' Most frequent adverse events
+#'
+#' @description
+#' Adverse events reported in at least 5% of patients in any treatment arm, as
+#' a flat list of MedDRA Preferred Terms (AEDECOD, not nested under System
+#' Organ Class), by treatment arm plus an overall column: count and percentage
+#' of patients with each event. Rows sorted by frequency. Reproduces
+#' tlg-catalog AET10 (variant 1).
+#'
+#' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
+#'   intent-to-treat (ITTFL). Defaults to safety.
+#' @return A data frame with one row per preferred term meeting the 5% threshold
+#'   and one column per treatment arm plus an "All Patients" column.
+#' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet10.qmd
+#' @measure
+ae_most_frequent <- function(population = c("SAF", "ITT"),
+                             adsl = adam_data()$adsl,
+                             adae = adam_data()$adae) {
+  adsl <- filter_population(adsl, population)
+  adae <- dplyr::semi_join(adae, adsl, by = "USUBJID")
+
+  adsl <- df_explicit_na(adsl)
+  adae <- df_explicit_na(adae)
+
+  lyt <- basic_table(show_colcounts = TRUE) %>%
+    split_cols_by(
+      var = "ACTARM",
+      split_fun = add_overall_level("All Patients", first = FALSE)
+    ) %>%
+    count_occurrences(vars = "AEDECOD")
+
+  tbl <- build_table(lyt, df = adae, alt_counts_df = adsl)
+
+  tbl <- prune_table(
+    tbl,
+    prune_func = keep_rows(
+      has_fraction_in_any_col(atleast = 0.05, col_names = levels(adsl$ACTARM))
+    )
+  )
+
+  result <- sort_at_path(tbl, path = c("AEDECOD"), scorefun = score_occurrences)
+  tidy_tlg(result)
+}
+
+#' Adverse event rate adjusted for patient-years at risk
+#'
+#' @description
+#' Rate of the first adverse-event occurrence per 100 patient-years at risk,
+#' with a 95% confidence interval, by treatment arm: total patient-years at
+#' risk, number of patients with an event, and the adjusted rate. Uses the
+#' time-to-first-AE parameter (AETTE1) from adaette. Reproduces tlg-catalog
+#' AET05.
+#'
+#' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
+#'   intent-to-treat (ITTFL). Defaults to safety.
+#' @return A data frame with patient-years at risk, event count, rate per 100
+#'   patient-years, and its confidence interval, one column per treatment arm.
+#' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet05.qmd
+#' @measure
+ae_incidence_rate <- function(population = c("SAF", "ITT"),
+                              adsl = adam_data()$adsl,
+                              adaette = adam_data()$adaette) {
+  adsl <- filter_population(adsl, population)
+  adaette <- dplyr::semi_join(adaette, adsl, by = "USUBJID")
+
+  adsl <- df_explicit_na(adsl)
+  anl <- df_explicit_na(adaette) %>%
+    filter(PARAMCD == "AETTE1") %>%
+    mutate(n_events = as.integer(CNSR == 0))
+
+  lyt <- basic_table(show_colcounts = TRUE) %>%
+    split_cols_by("ACTARM") %>%
+    estimate_incidence_rate(
+      vars = "AVAL",
+      n_events = "n_events",
+      control = control_incidence_rate(num_pt_year = 100)
+    )
+
+  result <- build_table(lyt, anl, alt_counts_df = adsl)
   tidy_tlg(result)
 }
