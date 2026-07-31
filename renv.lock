@@ -1199,7 +1199,7 @@
         "promises (>= 1.5.0)",
         "R6",
         "ragnar",
-        "rlang",
+        "rlang (>= 1.2.0)",
         "roxygen2",
         "S7",
         "utils"
@@ -1224,22 +1224,20 @@
         "yaml"
       ],
       "VignetteBuilder": "knitr",
-      "Remotes": "posit-dev/shinychat, simonpcouch/ragnar@writable-extensions",
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
       "Roxygen": "list(markdown = TRUE)",
       "Config/roxygen2/version": "8.0.0",
       "Config/Needs/website": "tidyverse/tidytemplate",
+      "Author": "Simon Couch [aut, cre] (ORCID: <https://orcid.org/0000-0001-5676-5107>), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
+      "Maintainer": "Simon Couch <simon.couch@posit.co>",
       "RemoteType": "github",
+      "Remotes": "posit-dev/shinychat, simonpcouch/ragnar@writable-extensions",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "commons",
       "RemoteUsername": "posit-dev",
-      "RemotePkgRef": "posit-dev/commons@definitions-6",
-      "RemoteRef": "definitions-6",
-      "RemoteSha": "363316fd7afdaddfa6144a1db2d5ef60841f77ca",
-      "NeedsCompilation": "yes",
-      "Author": "Simon Couch [aut, cre] (<https://orcid.org/0000-0001-5676-5107>), Posit Software, PBC [cph, fnd] (03wc8by49)",
-      "Maintainer": "Simon Couch <simon.couch@posit.co>"
+      "RemoteRepo": "commons",
+      "RemoteRef": "main",
+      "RemoteSha": "99a01bb20eec74484e867f0e969ee39651af6868"
     },
     "coro": {
       "Package": "coro",

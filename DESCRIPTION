@@ -26,5 +26,5 @@ Imports:
 Suggests:
     otelsdk
 Remotes:
-    posit-dev/commons@definitions-6,
+    posit-dev/commons,
     posit-dev/shinychat/pkg-r
