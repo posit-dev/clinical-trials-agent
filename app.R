@@ -47,7 +47,10 @@ server <- function(input, output, session) {
   commons_server(
     "chat",
     new_tlg_agent(),
-    history = shinychat::history_options(store = "memory")
+    history = shinychat::history_options(
+      store = "memory",
+      title = NULL
+    )
   )
 }
 
