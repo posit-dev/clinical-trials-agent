@@ -19,10 +19,7 @@ new_tlg_agent <- function() {
     ),
     semantic_layer = semantic_layer("measures"),
     context_layer = context_layer(list.files("context", full.names = TRUE)),
-    instructions = ellmer::interpolate_file(
-      "system-prompt.md",
-      date = Sys.Date()
-    ),
+    instructions = "instructions.md",
     log = TRUE
   )
 }
