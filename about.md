@@ -18,5 +18,6 @@ and loaded into an in-process DuckDB. Four analysis datasets are available:
 
 ### Tables, listings, and graphs
 
-Standard questions are answered from validated measures, which use code from Insight Engineering's [TLG Catalog](https://github.com/insightsengineering/tlg-catalog). 
-
+Standard questions are answered from validated measures, including measures
+that render plots directly. The measures use code from Insights Engineering's
+[TLG Catalog](https://github.com/insightsengineering/tlg-catalog).

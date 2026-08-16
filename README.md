@@ -40,13 +40,19 @@ falls back to responsible SQL over the ADaM datasets.
 | DTHT01 | `deaths` |
 | LBT04 | `lab_abnormalities` |
 
-**Graphs** are plotting recipes in `context/graphs.md` (AE by system organ
-class, exposure, age, and lab value distribution / over time).
+**Graphs — rendered directly by validated measures:**
+
+| Catalog | Measure |
+|---|---|
+| BRG01 | `ae_by_soc_plot` |
+| BWG01 | `exposure_by_arm_plot` |
+| BWG01 | `age_by_arm_plot` |
+| BWG01 | `lab_by_arm_plot` |
+| MNG01 | `lab_over_time_plot` |
 
 ## Attribution
 
-The measures in `measures/` and the graph conventions in `context/graphs.md`
-reproduce or adapt recipes from the
+The measures in `measures/` reproduce or adapt recipes from the
 [insightsengineering/tlg-catalog](https://github.com/insightsengineering/tlg-catalog),
 which is © 2023 F. Hoffmann-La Roche AG and licensed under the
 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).

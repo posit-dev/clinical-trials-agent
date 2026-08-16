@@ -246,9 +246,9 @@ demography <- function(population = c("SAF", "ITT"),
 #' @param min_incidence `number` Keep only preferred terms that occur in at
 #'   least this fraction (0-1) of patients in at least one treatment arm (e.g.
 #'   0.05 for 5%). Omit to show all terms.
-#' @return A data frame with SOC and preferred-term rows (count and percentage
-#'   of patients, and event counts) and one column per treatment arm plus an
-#'   "All Patients" column.
+#' @return A richly formatted table with SOC and preferred-term rows (count and
+#'   percentage of patients, and event counts) and one column per treatment arm
+#'   plus an "All Patients" column.
 #' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet02.qmd
 #' @measure
 ae_by_soc_pt <- function(population = c("SAF", "ITT"),
@@ -309,7 +309,7 @@ ae_by_soc_pt <- function(population = c("SAF", "ITT"),
     )
   }
 
-  tidy_tlg(result)
+  rich_tlg(result)
 }
 
 #' Adverse events by highest toxicity grade
@@ -545,8 +545,8 @@ ae_by_intensity <- function(population = c("SAF", "ITT"),
 #'
 #' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
 #'   intent-to-treat (ITTFL). Defaults to safety.
-#' @return A data frame with SOC and preferred-term rows and one column per
-#'   treatment-arm-by-grade-group combination.
+#' @return A richly formatted table with SOC and preferred-term rows and one
+#'   column per treatment-arm-by-grade-group combination.
 #' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet04_pi.qmd
 #' @measure
 ae_frequent_by_grade <- function(population = c("SAF", "ITT"),
@@ -616,7 +616,7 @@ ae_frequent_by_grade <- function(population = c("SAF", "ITT"),
     trim_rows(criteria = criteria_fun) %>%
     prune_table(keep_rows(at_least_10percent_any))
 
-  tidy_tlg(result)
+  rich_tlg(result)
 }
 
 #' Adverse events by sex
@@ -630,8 +630,8 @@ ae_frequent_by_grade <- function(population = c("SAF", "ITT"),
 #'
 #' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
 #'   intent-to-treat (ITTFL). Defaults to safety.
-#' @return A data frame with SOC and preferred-term rows and one column per
-#'   treatment-arm-by-sex combination.
+#' @return A richly formatted table with SOC and preferred-term rows and one
+#'   column per treatment-arm-by-sex combination.
 #' @provenance https://github.com/insightsengineering/tlg-catalog/blob/b3019fec92280384bac322680face57b2f685bfc/book/tables/adverse-events/aet06.qmd
 #' @measure
 ae_by_sex <- function(population = c("SAF", "ITT"),
@@ -684,7 +684,7 @@ ae_by_sex <- function(population = c("SAF", "ITT"),
     sort_at_path(path = c("AEBODSYS"), scorefun = cont_n_allcols) %>%
     sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = score_occurrences)
 
-  tidy_tlg(result)
+  rich_tlg(result)
 }
 
 #' Adverse events related to study drug

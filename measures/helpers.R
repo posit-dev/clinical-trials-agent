@@ -9,10 +9,11 @@
 # insightsengineering/tlg-catalog, run over CDISC ADaM sample data from
 # random.cdisc.data. A measure body mirrors the catalog recipe (same tern /
 # rtables composition), with the inputs a monitor would vary lifted to
-# documented @param arguments; everything else stays hardcoded as vetted. Each
-# measure returns a tidy data frame (via tidy_tlg()) so the agent reasons over
-# data rather than a formatted TableTree, and carries an @provenance tag
-# pinning the exact catalog source it came from.
+# documented @param arguments; everything else stays hardcoded as vetted.
+# Measures return either a tidy data frame or, when the table's hierarchy is
+# meaningful, a rich table whose authored HTML is shared with the agent. Each
+# measure carries an @provenance tag pinning the exact catalog source it came
+# from.
 #
 # Fidelity note: these measures use only columns whose simulated values are
 # realistic. Some catalog recipes overwrite real ADaM columns with sample()
@@ -29,8 +30,17 @@ library(dplyr)
 source("R/data.R")
 
 # Restrict adsl to an analysis population: "SAF" -> SAFFL, "ITT" -> ITTFL.
-filter_population <- function(adsl, population = c("SAF", "ITT")) {
-  population <- match.arg(population)
+filter_population <- function(
+  adsl,
+  population = c("SAF", "ITT"),
+  call = rlang::caller_env()
+) {
+  population <- measure_choice(
+    population,
+    c("SAF", "ITT"),
+    "population",
+    call = call
+  )
   flag <- if (population == "SAF") "SAFFL" else "ITTFL"
   dplyr::filter(adsl, .data[[flag]] == "Y")
 }
@@ -43,8 +53,34 @@ filter_population <- function(adsl, population = c("SAF", "ITT")) {
 # one shape that is uniform across count and descriptive-statistic tables.
 tidy_tlg <- function(tt) {
   df <- as_result_df(tt, data_format = "strings", keep_label_rows = TRUE)
-  meta <- c("avar_name", "row_name", "row_num", "is_group_summary", "node_class")
+  meta <- c(
+    "avar_name",
+    "row_name",
+    "row_num",
+    "is_group_summary",
+    "node_class"
+  )
   df <- df[, setdiff(names(df), meta), drop = FALSE]
   names(df)[names(df) == "label_name"] <- "statistic"
   df
+}
+
+rich_tlg <- function(tt) {
+  commons::rich_table(
+    tt,
+    html = rtables::as_html(tt, width = "100%")
+  )
+}
+
+measure_choice <- function(value, choices, arg, call = rlang::caller_env()) {
+  if (length(value) > 1 && identical(value, choices)) {
+    return(value[[1]])
+  }
+  if (length(value) != 1 || is.na(value) || !value %in% choices) {
+    cli::cli_abort(
+      "{.arg {arg}} must be one of {.or {.val {choices}}}.",
+      call = call
+    )
+  }
+  value
 }

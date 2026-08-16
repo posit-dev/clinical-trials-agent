@@ -10,21 +10,28 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:
     bslib,
+    cli,
     commons,
     DBI,
     dplyr,
     duckdb,
     ellmer,
+    ggplot2,
     glue,
     markdown,
     random.cdisc.data,
+    rlang,
     rtables,
+    scales,
     shiny,
     shinychat,
     tern,
     yaml
 Suggests:
-    otelsdk
+    otelsdk,
+    testthat (>= 3.0.0)
 Remotes:
-    posit-dev/commons,
-    posit-dev/shinychat/pkg-r
+    posit-dev/commons@rich-output-56,
+    posit-dev/shinychat/pkg-r,
+    tidyverse/ellmer
+Config/testthat/edition: 3

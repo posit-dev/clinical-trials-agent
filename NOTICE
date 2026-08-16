@@ -8,11 +8,11 @@ This product includes materials adapted from the TLG Catalog:
     Copyright 2023 F. Hoffmann-La Roche AG
     Licensed under the Apache License, Version 2.0.
 
-The validated measures in measures/tables.R and measures/listings.R, and the
-graph conventions in context/graphs.md, reproduce or adapt code examples from
-that catalog (the tern / rtables TLG recipes). Each measure carries an
-@provenance tag pinning the exact catalog source file and commit it was
-extracted from (commit b3019fec92280384bac322680face57b2f685bfc).
+The validated measures in measures/tables.R, measures/listings.R, and
+measures/graphs.R reproduce or adapt code examples from that catalog (the tern
+/ rtables / ggplot2 TLG recipes). Each measure carries an @provenance tag
+pinning the exact catalog source file and commit it was extracted from (commit
+b3019fec92280384bac322680face57b2f685bfc).
 
 A copy of the Apache License, Version 2.0 is available at:
 
