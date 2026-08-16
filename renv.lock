@@ -1239,7 +1239,7 @@
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "commons",
       "RemoteRef": "rich-output-56",
-      "RemoteSha": "5d0306be0242ceebdabeae690247967f444c9322"
+      "RemoteSha": "db59dde67ba1e8dcfd707e049c996eb0333b7095"
     },
     "coro": {
       "Package": "coro",
@@ -4881,28 +4881,22 @@
         "covr",
         "knitr",
         "later",
+        "shinytest2",
         "testthat (>= 3.0.0)",
         "withr"
       ],
       "Config/Needs/website": "tidyverse/tidytemplate, rmarkdown, weathR, gt, glue, bsicons",
-      "Config/roxygen2/version": "8.0.0",
+      "Config/roxygen2/version": "8.1.0",
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
       "Roxygen": "list(markdown = TRUE)",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "shinychat",
       "RemoteUsername": "posit-dev",
-      "RemotePkgRef": "posit-dev/shinychat/pkg-r",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "0dfe29bcbb3586bde1accb6eb9e2b13e931894e1",
+      "RemoteRepo": "shinychat",
       "RemoteSubdir": "pkg-r",
-      "NeedsCompilation": "no",
-      "Author": "Joe Cheng [aut], Carson Sievert [aut], Garrick Aden-Buie [aut, cre] (ORCID: <https://orcid.org/0000-0002-7111-0077>), Barret Schloerke [aut] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
-      "Maintainer": "Garrick Aden-Buie <garrick@adenbuie.com>",
-      "Depends": [
-        "R (>= 4.1.0)"
-      ]
+      "RemoteRef": "main",
+      "RemoteSha": "aa35a0988319103c35637e6d467ebc02a3180e3c"
     },
     "sourcetools": {
       "Package": "sourcetools",
