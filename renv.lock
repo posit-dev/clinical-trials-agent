@@ -1239,7 +1239,7 @@
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "commons",
       "RemoteRef": "rich-output-56",
-      "RemoteSha": "db59dde67ba1e8dcfd707e049c996eb0333b7095"
+      "RemoteSha": "a48ba1c35593b7fe1322242cb17de6b42c91f59d"
     },
     "coro": {
       "Package": "coro",

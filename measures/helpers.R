@@ -10,8 +10,8 @@
 # random.cdisc.data. A measure body mirrors the catalog recipe (same tern /
 # rtables composition), with the inputs a monitor would vary lifted to
 # documented @param arguments; everything else stays hardcoded as vetted.
-# Measures return either a tidy data frame or, when the table's hierarchy is
-# meaningful, a rich table whose authored HTML is shared with the agent. Each
+# Table measures give the agent a tidy data frame, show the user the formatted
+# table, and retain the original rtables object for follow-up computation. Each
 # measure carries an @provenance tag pinning the exact catalog source it came
 # from.
 #
@@ -45,12 +45,26 @@ filter_population <- function(
   dplyr::filter(adsl, .data[[flag]] == "Y")
 }
 
-# Convert a built rtables TableTree into a flat, labelled data frame for the
-# agent: one row per statistic, one column per treatment arm, cells as the
-# standard "n (%)" / "mean (sd)" / "min - max" strings. Drops as_result_df()'s
-# internal layout metadata, keeping the human-readable row label and the arm
-# value columns. Formatted strings (rather than numeric list-columns) are the
-# one shape that is uniform across count and descriptive-statistic tables.
+tlg_result <- function(tt) {
+  ellmer::ContentToolResult(
+    value = tidy_tlg(tt),
+    extra = list(
+      display = shinychat::tool_result_display(
+        html = rtables::as_html(tt, width = "100%"),
+        open = TRUE,
+        full_screen = TRUE
+      ),
+      data = tt
+    )
+  )
+}
+
+# Convert a built rtables table into a flat, labelled data frame for the agent:
+# one row per statistic, one column per treatment arm, cells as the standard
+# "n (%)" / "mean (sd)" / "min - max" strings. Drops as_result_df()'s internal
+# layout metadata, keeping the human-readable row label and the arm value
+# columns. Formatted strings (rather than numeric list-columns) are the one
+# shape that is uniform across count and descriptive-statistic tables.
 tidy_tlg <- function(tt) {
   df <- as_result_df(tt, data_format = "strings", keep_label_rows = TRUE)
   meta <- c(
@@ -63,13 +77,6 @@ tidy_tlg <- function(tt) {
   df <- df[, setdiff(names(df), meta), drop = FALSE]
   names(df)[names(df) == "label_name"] <- "statistic"
   df
-}
-
-rich_tlg <- function(tt) {
-  commons::rich_table(
-    tt,
-    html = rtables::as_html(tt, width = "100%")
-  )
 }
 
 measure_choice <- function(value, choices, arg, call = rlang::caller_env()) {

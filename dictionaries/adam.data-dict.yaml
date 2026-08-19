@@ -622,8 +622,9 @@ tables:
         values: [WEEKS, YEARS]
       - name: CNSR
         label: Censor
-        type: enum
-        values: {0: "Event occurred", 1: "Censored (no event observed)"}
+        type: number(id)
+        examples: [0, 1]
+        details: 0 means the event occurred; 1 means no event was observed.
       - name: EVNTDESC
         label: Event or Censoring Description
         type: string
