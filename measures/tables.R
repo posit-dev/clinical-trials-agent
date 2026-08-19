@@ -90,7 +90,7 @@ ae_overview <- function(population = c("SAF", "ITT"),
     result_adae[3:nrow(result_adae), ]
   )
 
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Patient disposition
@@ -131,7 +131,7 @@ disposition <- function(population = c("SAF", "ITT"),
     analyze_vars("DCSREAS", .stats = "count_fraction", denom = "N_col", show_labels = "hidden")
 
   result <- prune_table(build_table(lyt, df = adsl))
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Study drug exposure
@@ -173,7 +173,7 @@ exposure_summary <- function(population = c("SAF", "ITT"),
     analyze_vars(vars = "AVAL")
 
   result <- build_table(lyt, df = adex, alt_counts_df = adsl)
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Demographics and baseline characteristics
@@ -228,7 +228,7 @@ demography <- function(population = c("SAF", "ITT"),
     analyze_vars(vars = vars, var_labels = var_labels) %>%
     build_table(adsl)
 
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Adverse events by system organ class and preferred term
@@ -309,7 +309,7 @@ ae_by_soc_pt <- function(population = c("SAF", "ITT"),
     )
   }
 
-  rich_tlg(result)
+  tlg_result(result)
 }
 
 #' Adverse events by highest toxicity grade
@@ -379,7 +379,7 @@ ae_by_grade <- function(population = c("SAF", "ITT"),
     sort_at_path(path = "AEBODSYS", scorefun = score_all_sum, decreasing = TRUE) %>%
     sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = score_all_sum, decreasing = TRUE)
 
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Deaths
@@ -415,7 +415,7 @@ deaths <- function(population = c("SAF", "ITT"),
     analyze_vars(vars = "DTHCAT", var_labels = "Primary Cause of Death")
 
   result <- build_table(lyt, df = adsl)
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Laboratory abnormalities not present at baseline
@@ -462,7 +462,7 @@ lab_abnormalities <- function(population = c("SAF", "ITT"),
     append_varlabels(adlb, "ANRIND", indent = 1L)
 
   result <- build_table(lyt, df = adlb, alt_counts_df = adsl)
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Adverse events by greatest intensity
@@ -530,7 +530,7 @@ ae_by_intensity <- function(population = c("SAF", "ITT"),
     sort_at_path(path = "AEBODSYS", scorefun = cont_n_allcols, decreasing = TRUE) %>%
     sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = cont_n_allcols, decreasing = TRUE)
 
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Most frequent adverse events by highest toxicity grade
@@ -616,7 +616,7 @@ ae_frequent_by_grade <- function(population = c("SAF", "ITT"),
     trim_rows(criteria = criteria_fun) %>%
     prune_table(keep_rows(at_least_10percent_any))
 
-  rich_tlg(result)
+  tlg_result(result)
 }
 
 #' Adverse events by sex
@@ -684,7 +684,7 @@ ae_by_sex <- function(population = c("SAF", "ITT"),
     sort_at_path(path = c("AEBODSYS"), scorefun = cont_n_allcols) %>%
     sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = score_occurrences)
 
-  rich_tlg(result)
+  tlg_result(result)
 }
 
 #' Adverse events related to study drug
@@ -755,7 +755,7 @@ ae_related <- function(population = c("SAF", "ITT"),
     sort_at_path(path = c("AEBODSYS"), scorefun = cont_n_allcols) %>%
     sort_at_path(path = c("AEBODSYS", "*", "AEDECOD"), scorefun = score_occurrences)
 
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Most frequent adverse events
@@ -799,7 +799,7 @@ ae_most_frequent <- function(population = c("SAF", "ITT"),
   )
 
   result <- sort_at_path(tbl, path = c("AEDECOD"), scorefun = score_occurrences)
-  tidy_tlg(result)
+  tlg_result(result)
 }
 
 #' Adverse event rate adjusted for patient-years at risk
@@ -837,5 +837,5 @@ ae_incidence_rate <- function(population = c("SAF", "ITT"),
     )
 
   result <- build_table(lyt, anl, alt_counts_df = adsl)
-  tidy_tlg(result)
+  tlg_result(result)
 }
