@@ -16,29 +16,24 @@ welcome_message <- paste(
   "- <span class='suggestion'>What are the demographics of the study population?</span>\n"
 )
 
-ui <- page_navbar(
-  title = tags$span(
-    style = "display: inline-flex; align-items: center; gap: 0.65rem;",
-    tags$img(
-      src = "assets/logo-bird.png",
-      height = "42px",
-      alt = "tlg agent",
-      style = "display: block;"
-    ),
-    tags$span("tlg agent", style = "font-weight: 300; font-size: 1.4rem;")
+ui <- shinychat::page_chat(
+  title = "tlg agent",
+  icon = tags$img(
+    src = "assets/logo-bird.png",
+    height = "26px",
+    alt = "",
+    style = "display: block;"
   ),
+  id = "chat",
   window_title = "Clinical trials TLG agent",
-  fillable = "Chat",
-  navbar_options = navbar_options(collapsible = FALSE),
-  nav_panel(
-    title = "Chat",
-    commons_ui("chat", greeting = welcome_message)
-  ),
-  nav_panel(
-    title = "About",
-    div(
-      style = "max-width: 780px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem;",
-      includeMarkdown("about.md")
+  theme = commons::commons_theme(),
+  greeting = welcome_message,
+  pages_navbar = list(
+    shinychat::chat_nav_panel(
+      "About",
+      includeMarkdown("about.md"),
+      value = "about",
+      content_width = "780px"
     )
   )
 )
