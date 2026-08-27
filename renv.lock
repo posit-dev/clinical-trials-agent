@@ -797,7 +797,7 @@
     },
     "bslib": {
       "Package": "bslib",
-      "Version": "0.11.0",
+      "Version": "0.12.0",
       "Source": "Repository",
       "Title": "Custom 'Bootstrap' 'Sass' Themes for 'shiny' and 'rmarkdown'",
       "Authors@R": "c( person(\"Carson\", \"Sievert\", , \"carson@posit.co\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-4958-2844\")), person(\"Joe\", \"Cheng\", , \"joe@posit.co\", role = \"aut\"), person(\"Garrick\", \"Aden-Buie\", , \"garrick@posit.co\", role = \"aut\", comment = c(ORCID = \"0000-0002-7111-0077\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")), person(, \"Bootstrap contributors\", role = \"ctb\", comment = \"Bootstrap library\"), person(, \"Twitter, Inc\", role = \"cph\", comment = \"Bootstrap library\"), person(\"Javi\", \"Aguilar\", role = c(\"ctb\", \"cph\"), comment = \"Bootstrap colorpicker library\"), person(\"Thomas\", \"Park\", role = c(\"ctb\", \"cph\"), comment = \"Bootswatch library\"), person(, \"PayPal\", role = c(\"ctb\", \"cph\"), comment = \"Bootstrap accessibility plugin\") )",
@@ -850,11 +850,11 @@
       "Config/testthat/parallel": "true",
       "Config/testthat/start-first": "zzzz-bs-sass, fonts, zzz-precompile, theme-*, rmd-*",
       "Encoding": "UTF-8",
-      "Collate": "'accordion.R' 'breakpoints.R' 'bs-current-theme.R' 'bs-dependencies.R' 'bs-global.R' 'bs-remove.R' 'bs-theme-layers.R' 'bs-theme-preset-bootswatch.R' 'bs-theme-preset-brand.R' 'bs-theme-preset-builtin.R' 'bs-theme-preset.R' 'utils.R' 'bs-theme-preview.R' 'bs-theme-update.R' 'bs-theme.R' 'bslib-package.R' 'buttons.R' 'card.R' 'deprecated.R' 'files.R' 'fill.R' 'imports.R' 'input-code-editor.R' 'input-dark-mode.R' 'input-submit.R' 'input-switch.R' 'layout.R' 'nav-items.R' 'nav-update.R' 'navbar_options.R' 'navs-legacy.R' 'navs.R' 'onLoad.R' 'page.R' 'popover.R' 'precompiled.R' 'print.R' 'shiny-devmode.R' 'sidebar.R' 'staticimports.R' 'toast.R' 'toolbar.R' 'tooltip.R' 'utils-deps.R' 'utils-shiny.R' 'utils-tags.R' 'value-box.R' 'version-default.R' 'versions.R'",
+      "Collate": "'accordion.R' 'breakpoints.R' 'bs-current-theme.R' 'bs-dependencies.R' 'bs-global.R' 'bs-remove.R' 'bs-theme-layers.R' 'bs-theme-preset-bootswatch.R' 'bs-theme-preset-brand.R' 'bs-theme-preset-builtin.R' 'bs-theme-preset.R' 'utils.R' 'bs-theme-preview.R' 'bs-theme-update.R' 'bs-theme.R' 'bslib-package.R' 'buttons.R' 'card.R' 'deprecated.R' 'files.R' 'fill.R' 'imports.R' 'input-code-editor.R' 'input-dark-mode.R' 'input-submit.R' 'input-switch.R' 'layout.R' 'nav-items.R' 'nav-update.R' 'navbar_options.R' 'navs-legacy.R' 'navs.R' 'offcanvas.R' 'onLoad.R' 'page.R' 'popover.R' 'precompiled.R' 'print.R' 'shiny-devmode.R' 'sidebar.R' 'staticimports.R' 'toast.R' 'toolbar.R' 'tooltip.R' 'utils-deps.R' 'utils-shiny.R' 'utils-tags.R' 'value-box.R' 'version-default.R' 'versions.R'",
       "NeedsCompilation": "no",
       "Author": "Carson Sievert [aut, cre] (ORCID: <https://orcid.org/0000-0002-4958-2844>), Joe Cheng [aut], Garrick Aden-Buie [aut] (ORCID: <https://orcid.org/0000-0002-7111-0077>), Posit Software, PBC [cph, fnd], Bootstrap contributors [ctb] (Bootstrap library), Twitter, Inc [cph] (Bootstrap library), Javi Aguilar [ctb, cph] (Bootstrap colorpicker library), Thomas Park [ctb, cph] (Bootswatch library), PayPal [ctb, cph] (Bootstrap accessibility plugin)",
       "Maintainer": "Carson Sievert <carson@posit.co>",
-      "Repository": "CRAN"
+      "Repository": "https://packagemanager.posit.co/cran/latest"
     },
     "cachem": {
       "Package": "cachem",
@@ -1175,13 +1175,13 @@
     },
     "commons": {
       "Package": "commons",
-      "Version": "0.0.0.9000",
+      "Version": "0.0.0.9002",
       "Source": "GitHub",
-      "Title": "Build Self-Service Data Science Agents",
+      "Title": "AI Agents for Data Analysis",
       "Authors@R": "c( person(\"Simon\", \"Couch\", , \"simon.couch@posit.co\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0001-5676-5107\")), person(\"Sara\", \"Altman\", , \"sara.altman@posit.co\", role = \"aut\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"), comment = c(ROR = \"03wc8by49\")) )",
-      "Description": "Build correct and easy-to-use self-service data science agents for your organization. Connect raw data sources and a searchable context layer that demonstrates how to interpret them, then deploy agents that answer data questions, log interactions, and can be evaluated and improved over time.",
+      "Description": "Implements trustworthy large language model agents.  Connect raw data sources, a pool of trusted calculations, and a searchable  context layer that demonstrates how to interpret them. Then, deploy data agents that answer questions, log interactions, and can be evaluated and improved over time.",
       "License": "MIT + file LICENSE",
-      "URL": "https://github.com/posit-dev/commons, https://posit-dev.github.io/commons/, https://solid-adventure-ny1mpqy.pages.github.io/",
+      "URL": "https://github.com/posit-dev/commons, https://posit-dev.github.io/commons/",
       "BugReports": "https://github.com/posit-dev/commons/issues",
       "Imports": [
         "callr",
@@ -1203,43 +1203,51 @@
         "rlang (>= 1.2.0)",
         "roxygen2",
         "S7",
+        "shinychat (> 0.4.0)",
         "utils"
       ],
       "Suggests": [
         "bit64",
         "bsicons",
         "bslib (>= 0.11.0)",
+        "chromote",
         "dbplyr",
         "dplyr",
+        "ggplot2",
+        "gt",
         "htmltools",
         "odbc",
         "otel (>= 0.2.0)",
         "otelsdk (>= 0.2.0)",
         "pins",
         "plotly",
+        "pkgload",
         "ragg",
         "readr",
         "rmarkdown",
         "shiny (>= 1.11.1)",
-        "shinychat (> 0.4.0)",
+        "shinytest2",
         "testthat (>= 3.0.0)",
         "vitals",
         "withr",
         "yaml"
       ],
       "VignetteBuilder": "knitr",
-      "Remotes": "tidyverse/ellmer, posit-dev/shinychat/pkg-r",
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
       "Roxygen": "list(markdown = TRUE)",
       "Config/roxygen2/version": "8.0.0",
       "Config/Needs/website": "tidyverse/tidytemplate",
+      "Author": "Simon Couch [aut, cre] (ORCID: <https://orcid.org/0000-0001-5676-5107>), Sara Altman [aut], Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
+      "Maintainer": "Simon Couch <simon.couch@posit.co>",
       "RemoteType": "github",
+      "Remotes": "posit-dev/shinychat/pkg-r",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "commons",
-      "RemoteRef": "rich-output-56",
-      "RemoteSha": "a48ba1c35593b7fe1322242cb17de6b42c91f59d"
+      "RemoteSubdir": "pkg-r",
+      "RemoteRef": "main",
+      "RemoteSha": "a48d1277a4748414479cfb8e98e0f5f9c14313d9"
     },
     "coro": {
       "Package": "coro",
@@ -1759,8 +1767,9 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "tidyverse",
       "RemoteRepo": "ellmer",
-      "RemoteRef": "main",
-      "RemoteSha": "01ac21ab66a6f5ae9fa5b00c76045585bc3a2972"
+      "RemotePkgRef": "tidyverse/ellmer",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "19be478ebf1a2e5d2db96a8aeaca71592c8d3f26"
     },
     "emmeans": {
       "Package": "emmeans",
@@ -4863,7 +4872,7 @@
       "BugReports": "https://github.com/posit-dev/shinychat/issues",
       "Imports": [
         "base64enc",
-        "bslib",
+        "bslib (>= 0.12.0)",
         "cli",
         "coro",
         "ellmer (>= 0.4.1)",
@@ -4878,6 +4887,7 @@
         "shiny (>= 1.10.0)"
       ],
       "Suggests": [
+        "chromote",
         "covr",
         "knitr",
         "later",
@@ -4890,13 +4900,15 @@
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
       "Roxygen": "list(markdown = TRUE)",
+      "Author": "Joe Cheng [aut], Carson Sievert [aut], Garrick Aden-Buie [aut, cre] (ORCID: <https://orcid.org/0000-0002-7111-0077>), Barret Schloerke [aut] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
+      "Maintainer": "Garrick Aden-Buie <garrick@adenbuie.com>",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "shinychat",
       "RemoteSubdir": "pkg-r",
       "RemoteRef": "main",
-      "RemoteSha": "aa35a0988319103c35637e6d467ebc02a3180e3c"
+      "RemoteSha": "14f41796c7f56f8786818e1ac6eb07882e6f647e",
+      "RemoteHost": "api.github.com"
     },
     "sourcetools": {
       "Package": "sourcetools",

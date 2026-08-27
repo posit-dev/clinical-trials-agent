@@ -31,7 +31,7 @@ Suggests:
     otelsdk,
     testthat (>= 3.0.0)
 Remotes:
-    posit-dev/commons@rich-output-56,
+    posit-dev/commons/pkg-r,
     posit-dev/shinychat/pkg-r,
-    tidyverse/ellmer
+    tidyverse/ellmer@HEAD
 Config/testthat/edition: 3
