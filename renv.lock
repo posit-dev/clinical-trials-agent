@@ -1175,7 +1175,7 @@
     },
     "commons": {
       "Package": "commons",
-      "Version": "0.0.0.9002",
+      "Version": "0.0.0.9003",
       "Source": "GitHub",
       "Title": "AI Agents for Data Analysis",
       "Authors@R": "c( person(\"Simon\", \"Couch\", , \"simon.couch@posit.co\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0001-5676-5107\")), person(\"Sara\", \"Altman\", , \"sara.altman@posit.co\", role = \"aut\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"), comment = c(ROR = \"03wc8by49\")) )",
@@ -1184,6 +1184,7 @@
       "URL": "https://github.com/posit-dev/commons, https://posit-dev.github.io/commons/",
       "BugReports": "https://github.com/posit-dev/commons/issues",
       "Imports": [
+        "bslib (>= 0.11.0)",
         "callr",
         "cli",
         "coro",
@@ -1192,6 +1193,7 @@
         "ellmer (>= 0.4.1)",
         "evaluate",
         "glue",
+        "htmltools",
         "httr2 (>= 1.1.0)",
         "jsonlite",
         "knitr",
@@ -1203,19 +1205,18 @@
         "rlang (>= 1.2.0)",
         "roxygen2",
         "S7",
+        "sass",
         "shinychat (> 0.4.0)",
         "utils"
       ],
       "Suggests": [
         "bit64",
         "bsicons",
-        "bslib (>= 0.11.0)",
         "chromote",
         "dbplyr",
         "dplyr",
         "ggplot2",
         "gt",
-        "htmltools",
         "odbc",
         "otel (>= 0.2.0)",
         "otelsdk (>= 0.2.0)",
@@ -1236,7 +1237,7 @@
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
       "Roxygen": "list(markdown = TRUE)",
-      "Config/roxygen2/version": "8.0.0",
+      "Config/roxygen2/version": "8.1.0",
       "Config/Needs/website": "tidyverse/tidytemplate",
       "Author": "Simon Couch [aut, cre] (ORCID: <https://orcid.org/0000-0001-5676-5107>), Sara Altman [aut], Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
       "Maintainer": "Simon Couch <simon.couch@posit.co>",
@@ -1246,8 +1247,8 @@
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "commons",
       "RemoteSubdir": "pkg-r",
-      "RemoteRef": "main",
-      "RemoteSha": "a48d1277a4748414479cfb8e98e0f5f9c14313d9"
+      "RemoteRef": "a83c01285d3e61dfb08ed44397d436d938dc9608",
+      "RemoteSha": "a83c01285d3e61dfb08ed44397d436d938dc9608"
     },
     "coro": {
       "Package": "coro",
@@ -1765,11 +1766,14 @@
       "Collate": "'utils-S7.R' 'types.R' 'ellmer-package.R' 'tools-def.R' 'content.R' 'provider.R' 'as-json.R' 'batch-chat.R' 'chat-structured.R' 'chat-tools-content.R' 'turns.R' 'chat-tools.R' 'chat-utils.R' 'utils-coro.R' 'chat.R' 'content-image.R' 'content-pdf.R' 'content-replay.R' 'httr2.R' 'import-standalone-defer.R' 'import-standalone-obj-type.R' 'import-standalone-purrr.R' 'import-standalone-types-check.R' 'interpolate.R' 'live.R' 'model.R' 'otel.R' 'parallel-chat.R' 'params.R' 'prices.R' 'provider-any.R' 'provider-aws.R' 'provider-openai-compatible.R' 'provider-azure.R' 'provider-claude-files.R' 'provider-claude-tools.R' 'provider-claude.R' 'provider-google.R' 'provider-cloudflare.R' 'provider-databricks.R' 'provider-deepseek.R' 'provider-github.R' 'provider-google-tools.R' 'provider-google-upload.R' 'provider-groq.R' 'provider-huggingface.R' 'provider-lmstudio.R' 'provider-mistral.R' 'provider-ollama.R' 'provider-openai-tools.R' 'provider-openai.R' 'provider-openrouter.R' 'provider-perplexity.R' 'provider-portkey.R' 'provider-posit.R' 'provider-snowflake.R' 'provider-vllm.R' 'rounds.R' 'schema.R' 'stream-controller.R' 'tokens.R' 'tools-built-in.R' 'tools-def-auto.R' 'utils-auth.R' 'utils-callbacks.R' 'utils-cat.R' 'utils-merge.R' 'utils-prettytime.R' 'utils.R' 'zzz.R'",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "tidyverse",
       "RemoteRepo": "ellmer",
+      "RemoteUsername": "tidyverse",
       "RemotePkgRef": "tidyverse/ellmer",
       "RemoteRef": "HEAD",
-      "RemoteSha": "19be478ebf1a2e5d2db96a8aeaca71592c8d3f26"
+      "RemoteSha": "19be478ebf1a2e5d2db96a8aeaca71592c8d3f26",
+      "NeedsCompilation": "no",
+      "Author": "Hadley Wickham [aut, cre] (ORCID: <https://orcid.org/0000-0003-4757-117X>), Joe Cheng [aut], Aaron Jacobs [aut], Garrick Aden-Buie [aut] (ORCID: <https://orcid.org/0000-0002-7111-0077>), Barret Schloerke [aut] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
+      "Maintainer": "Hadley Wickham <hadley@posit.co>"
     },
     "emmeans": {
       "Package": "emmeans",
@@ -4903,12 +4907,12 @@
       "Author": "Joe Cheng [aut], Carson Sievert [aut], Garrick Aden-Buie [aut, cre] (ORCID: <https://orcid.org/0000-0002-7111-0077>), Barret Schloerke [aut] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
       "Maintainer": "Garrick Aden-Buie <garrick@adenbuie.com>",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "shinychat",
       "RemoteSubdir": "pkg-r",
-      "RemoteRef": "main",
-      "RemoteSha": "14f41796c7f56f8786818e1ac6eb07882e6f647e",
-      "RemoteHost": "api.github.com"
+      "RemoteRef": "e92e7c254a2a7e2b1949840d195daf7af18e316d",
+      "RemoteSha": "e92e7c254a2a7e2b1949840d195daf7af18e316d"
     },
     "sourcetools": {
       "Package": "sourcetools",

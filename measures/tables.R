@@ -243,9 +243,7 @@ demography <- function(population = c("SAF", "ITT"),
 #'
 #' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
 #'   intent-to-treat (ITTFL). Defaults to safety.
-#' @param min_incidence `number` Keep only preferred terms that occur in at
-#'   least this fraction (0-1) of patients in at least one treatment arm (e.g.
-#'   0.05 for 5%). Omit to show all terms.
+#' @param min_incidence `number` Fraction (0-1); omit to show all terms.
 #' @return A richly formatted table with SOC and preferred-term rows (count and
 #'   percentage of patients, and event counts) and one column per treatment arm
 #'   plus an "All Patients" column.
