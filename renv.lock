@@ -1247,8 +1247,8 @@
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "commons",
       "RemoteSubdir": "pkg-r",
-      "RemoteRef": "bfb8a3d8a15ccc917730002176f1cc43d1a2d29e",
-      "RemoteSha": "bfb8a3d8a15ccc917730002176f1cc43d1a2d29e"
+      "RemoteRef": "a83c01285d3e61dfb08ed44397d436d938dc9608",
+      "RemoteSha": "a83c01285d3e61dfb08ed44397d436d938dc9608"
     },
     "coro": {
       "Package": "coro",
@@ -4911,8 +4911,8 @@
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "shinychat",
       "RemoteSubdir": "pkg-r",
-      "RemoteRef": "ac99efe15c3399ef5694afa0646121e461ca049d",
-      "RemoteSha": "ac99efe15c3399ef5694afa0646121e461ca049d"
+      "RemoteRef": "e92e7c254a2a7e2b1949840d195daf7af18e316d",
+      "RemoteSha": "e92e7c254a2a7e2b1949840d195daf7af18e316d"
     },
     "sourcetools": {
       "Package": "sourcetools",
