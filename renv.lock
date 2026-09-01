@@ -1183,6 +1183,9 @@
       "License": "MIT + file LICENSE",
       "URL": "https://github.com/posit-dev/commons, https://posit-dev.github.io/commons/",
       "BugReports": "https://github.com/posit-dev/commons/issues",
+      "Depends": [
+        "R (>= 4.1.0)"
+      ],
       "Imports": [
         "bslib (>= 0.11.0)",
         "callr",
@@ -1193,6 +1196,7 @@
         "ellmer (>= 0.4.1)",
         "evaluate",
         "glue",
+        "highr",
         "htmltools",
         "httr2 (>= 1.1.0)",
         "jsonlite",
@@ -1247,8 +1251,8 @@
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "commons",
       "RemoteSubdir": "pkg-r",
-      "RemoteRef": "a83c01285d3e61dfb08ed44397d436d938dc9608",
-      "RemoteSha": "a83c01285d3e61dfb08ed44397d436d938dc9608"
+      "RemoteRef": "main",
+      "RemoteSha": "6a43f1cb31fd5adc29f2c18cb7037f80c38d8dc5"
     },
     "coro": {
       "Package": "coro",
@@ -4886,7 +4890,7 @@
         "lifecycle",
         "promises (>= 1.3.2)",
         "R6 (>= 2.5.0)",
-        "rlang (>= 1.1.0)",
+        "rlang (>= 1.2.0)",
         "S7",
         "shiny (>= 1.10.0)"
       ],
@@ -4911,8 +4915,8 @@
       "RemoteUsername": "posit-dev",
       "RemoteRepo": "shinychat",
       "RemoteSubdir": "pkg-r",
-      "RemoteRef": "e92e7c254a2a7e2b1949840d195daf7af18e316d",
-      "RemoteSha": "e92e7c254a2a7e2b1949840d195daf7af18e316d"
+      "RemoteRef": "main",
+      "RemoteSha": "369600e780dbbb2c6be82edeca92fead8347fb14"
     },
     "sourcetools": {
       "Package": "sourcetools",
