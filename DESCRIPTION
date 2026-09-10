@@ -25,6 +25,7 @@ Imports:
     scales,
     shiny,
     shinychat,
+    survival,
     tern,
     yaml
 Suggests:

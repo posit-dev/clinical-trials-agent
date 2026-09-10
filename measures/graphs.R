@@ -362,7 +362,3 @@ require_plot_data <- function(data, message, call = rlang::caller_env()) {
   }
   invisible(data)
 }
-
-population_label <- function(population) {
-  if (population[[1]] == "SAF") "Safety" else "Intent-to-treat"
-}

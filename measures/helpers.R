@@ -91,3 +91,7 @@ measure_choice <- function(value, choices, arg, call = rlang::caller_env()) {
   }
   value
 }
+
+population_label <- function(population) {
+  if (population[[1]] == "SAF") "Safety" else "Intent-to-treat"
+}
