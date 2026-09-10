@@ -1,7 +1,7 @@
-# Drives the deployed tlg-agent on Connect through headless Chrome so that
-# synthetic conversations generate real trajectories in the content's own
-# trace store. Each conversation runs in a fresh browser session, which gives
-# it a fresh commons conversation id.
+# Drives the deployed Clinical Trials Agent through headless Chrome so that
+# synthetic conversations generate real trajectories in the content's own trace
+# store. Each conversation runs in a fresh browser session, which gives it a
+# fresh commons conversation id.
 
 library(chromote)
 

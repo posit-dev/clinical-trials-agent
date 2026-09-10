@@ -4,26 +4,26 @@ $learn_more: http://data-dict.tidyverse.org/
 name: adam
 label: Study ADaM datasets
 description: >-
-  CDISC ADaM analysis datasets for a single simulated oncology study with three
+  CDISC ADaM analysis datasets for a single simulated clinical study with three
   treatment arms (A: Drug X, B: Placebo, C: Combination), from
-  random.cdisc.data. Three tables: subject level (adsl, one row per patient),
-  adverse events (adae, one row per AE record), and drug exposure (adex, one row
-  per exposure parameter per patient). For standard safety, disposition,
-  exposure, and demography summaries, prefer the validated measures in the
-  semantic layer; use SQL over these tables for ad-hoc questions the measures do
-  not cover.
+  random.cdisc.data. Five tables: subject level (adsl), adverse events (adae),
+  drug exposure (adex), laboratory results (adlb), and adverse-event
+  time-to-event and event-count parameters (adaette). For standard safety,
+  disposition, exposure, demography, and laboratory summaries, prefer the
+  trusted measures in the semantic layer; use SQL over these tables for ad-hoc
+  questions the measures do not cover.
 details: >-
   Rules that span the tables. Analysis population is defined on adsl by SAFFL
   (safety) and ITTFL (intent-to-treat); in this simulated study every subject is
   in both. Adverse-event summaries are computed on adae records with
   ANL01FL = 'Y' (the analysis-record flag) -- always apply that for AE
-  questions. adae and adex both join to adsl on USUBJID and each carries a
+  questions. Each non-adsl table joins to adsl on USUBJID and carries a
   denormalized copy of many adsl subject-level fields (demographics, arm, flags,
   biomarkers); those copies are the same value repeated on every child row, so
   read them directly rather than joining back to adsl, and never join on them
   (see relationships/conflicts). Treatment arm is ACTARM (actual) on every
-  table; ARM is the planned arm -- use ACTARM for as-treated analyses. adae and
-  adex have one row per event/parameter, so count patients with
+  table; ARM is the planned arm -- use ACTARM for as-treated analyses. The four
+  non-adsl tables have repeated rows per patient, so count patients with
   COUNT(DISTINCT USUBJID), not COUNT(*). Variables follow CDISC ADaM/SDTM
   conventions; adverse events are MedDRA-coded and NCI-CTCAE-graded, with
   seriousness per ICH E2A and analysis populations per ICH E9.

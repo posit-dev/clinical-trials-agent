@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Shiny app (TLG agent) deployed to Posit Connect Cloud. Main entry point is `app.R`; supporting code in `R/`, `measures/`, `agent.R`. Dependencies managed with renv (`renv.lock`).
+Shiny app (Clinical Trials Agent) deployed to Posit Connect Cloud. Main entry point is `app.R`; supporting code in `R/`, `measures/`, `agent.R`. Dependencies managed with renv (`renv.lock`).
 
 ## Deploying to Posit Connect Cloud
 

@@ -7,9 +7,10 @@ source("agent.R")
 addResourcePath("assets", "assets")
 
 welcome_message <- paste(
-  "Ask the **TLG agent** about a clinical study's safety, disposition,",
-  "exposure, and demographics. Answers are computed with validated code over",
-  "simulated CDISC ADaM data.\n\nHere are some example questions:\n\n",
+  "Ask **Clinical Trials Agent** about a clinical study's safety, disposition,",
+  "exposure, demographics, and laboratory results. Answers use trusted measures",
+  "or governed SQL over simulated CDISC ADaM data.\n\n",
+  "Here are some example questions:\n\n",
 
   "- <span class='suggestion'>Show an adverse event overview by treatment arm.</span>\n",
   "- <span class='suggestion'>Summarize patient disposition for the safety population.</span>\n",
@@ -17,7 +18,7 @@ welcome_message <- paste(
 )
 
 ui <- shinychat::page_chat(
-  title = "tlg agent",
+  title = "Clinical Trials Agent",
   icon = tags$img(
     src = "assets/logo-bird.png",
     height = "26px",
@@ -25,7 +26,7 @@ ui <- shinychat::page_chat(
     style = "display: block;"
   ),
   id = "chat",
-  window_title = "Clinical trials TLG agent",
+  window_title = "Clinical Trials Agent",
   theme = commons::commons_theme(),
   greeting = welcome_message,
   pages_navbar = list(

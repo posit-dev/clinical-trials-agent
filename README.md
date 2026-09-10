@@ -1,18 +1,52 @@
-# tlg-agent
+# Clinical Trials Agent
 
-An example [commons](https://github.com/posit-dev/commons) self-service data
-agent for clinical trials data. It answers questions about a
-simulated trials's safety, disposition, exposure, and demographics. As a commons agent, it first tries to answer user questions using validated code, called measures. For this agent, these measures are recipes from
-[insightsengineering/tlg-catalog](https://github.com/insightsengineering/tlg-catalog). 
+Clinical Trials Agent is an example
+[commons](https://github.com/posit-dev/commons) self-service data agent for
+clinical trials. It answers questions about a simulated clinical study's
+safety, disposition, exposure, demographics, and laboratory results.
 
-**[Try it out](https://connect.posit.it/content/04ee623c-3daf-4893-989e-7be4f2c0e7a7)** 
+The agent first tries to answer questions with measures: trusted calculations
+that reproduce or adapt recipes from the
+[NEST TLG Catalog](https://github.com/insightsengineering/tlg-catalog). For
+questions outside measure coverage, it can run governed SQL over the study's
+CDISC ADaM datasets.
+
+**[Try Clinical Trials Agent](https://connect.posit.cloud/posit/content/01a04163-015f-f8f9-6f2a-af6d9a33e572)**
+
+> [!NOTE]
+> This app uses synthetic sample data and is intended for demonstration only.
+> It contains no real patient data.
+
+## Run locally
+
+The project uses R 4.6.1 and
+[`renv`](https://rstudio.github.io/renv/) for reproducible dependencies. You
+also need an [Anthropic API key](https://console.anthropic.com/settings/keys)
+for the model configured in `agent.R`.
+
+```r
+install.packages("renv")
+renv::restore()
+```
+
+Set the API key and start the Shiny app:
+
+```sh
+export ANTHROPIC_API_KEY="your-key"
+R -e 'shiny::runApp()'
+```
+
+The main application is in `app.R`. `agent.R` configures the model and commons
+layers; `measures/` contains the trusted calculations; `context/`,
+`instructions.md`, and `dictionaries/adam.data-dict.yaml` govern interpretation
+of the data.
 
 ## Coverage
 
 Standard questions are answered by measures; anything a measure doesn't cover
-falls back to responsible SQL over the ADaM datasets.
+falls back to governed SQL over the ADaM datasets.
 
-**Adverse events — the full table and listing family** (the agent's safety focus):
+**Adverse events - the full table and listing family** (the agent's safety focus):
 
 | Catalog | Measure |
 |---|---|
@@ -30,7 +64,7 @@ falls back to responsible SQL over the ADaM datasets.
 | AEL03 | `serious_ae_listing` |
 | AEL04 | `patient_death_listing` |
 
-**Other domains — representative core outputs:**
+**Other domains - representative core outputs:**
 
 | Catalog | Measure |
 |---|---|
@@ -40,7 +74,7 @@ falls back to responsible SQL over the ADaM datasets.
 | DTHT01 | `deaths` |
 | LBT04 | `lab_abnormalities` |
 
-**Graphs — rendered directly by validated measures:**
+**Graphs - rendered directly by measures:**
 
 | Catalog | Measure |
 |---|---|
@@ -50,15 +84,26 @@ falls back to responsible SQL over the ADaM datasets.
 | BWG01 | `lab_by_arm_plot` |
 | MNG01 | `lab_over_time_plot` |
 
+## Data
+
+The agent exposes five synthetic analysis datasets from
+[`random.cdisc.data`](https://insightsengineering.github.io/random.cdisc.data/):
+
+| Dataset | Contents |
+|---|---|
+| `adsl` | Subject-level demographics, treatment, disposition, and analysis populations |
+| `adae` | Adverse events |
+| `adex` | Study drug exposure |
+| `adlb` | Laboratory results |
+| `adaette` | Adverse-event time-to-event and event-count parameters |
+
 ## Attribution
 
 The measures in `measures/` reproduce or adapt recipes from the
 [insightsengineering/tlg-catalog](https://github.com/insightsengineering/tlg-catalog),
-which is © 2023 F. Hoffmann-La Roche AG and licensed under the
+which is copyright 2023 F. Hoffmann-La Roche AG and licensed under the
 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 Each measure's `@provenance` tag pins the exact catalog source file and commit
 it was extracted from. See [`NOTICE`](NOTICE) for the full attribution.
 
-Sample data comes from
-[`random.cdisc.data`](https://insightsengineering.github.io/random.cdisc.data/)
-(synthetic CDISC ADaM datasets, no real patient data).
+Code original to this repository is licensed under the [MIT License](LICENSE).
