@@ -6,29 +6,26 @@
   AETTE3 = "Time to First Grade 3-5 Adverse Event"
 )
 
+.ae_tte_free_labels <- c(
+  AETTE1 = "AE-free probability",
+  AETTE2 = "Serious AE-free probability",
+  AETTE3 = "Grade 3-5 AE-free probability"
+)
+
 prepare_ae_tte <- function(
   endpoint = c("AETTE1", "AETTE2", "AETTE3"),
   population = c("SAF", "ITT"),
   adsl = adam_data()$adsl,
-  adaette = adam_data()$adaette,
-  call = rlang::caller_env()
+  adaette = adam_data()$adaette
 ) {
-  endpoint <- measure_choice(
-    endpoint,
-    names(.ae_tte_endpoint_labels),
-    "endpoint",
-    call = call
-  )
-  population <- measure_choice(
-    population,
-    c("SAF", "ITT"),
-    "population",
-    call = call
-  )
+  endpoint <- match.arg(endpoint)
+  population <- match.arg(population)
 
-  adsl <- filter_population(adsl, population, call = call)
   analysis <- adaette |>
-    dplyr::semi_join(adsl, by = "USUBJID") |>
+    dplyr::semi_join(
+      filter_population(adsl, population),
+      by = "USUBJID"
+    ) |>
     dplyr::filter(.data[["PARAMCD"]] == endpoint) |>
     dplyr::transmute(
       USUBJID = .data[["USUBJID"]],
@@ -38,55 +35,13 @@ prepare_ae_tte <- function(
       CNSR = as.integer(.data[["CNSR"]])
     )
 
-  if (nrow(analysis) == 0) {
-    cli::cli_abort(
-      "No records are available for endpoint {.val {endpoint}} in the {population_label(population)} population.",
-      call = call
-    )
-  }
-
-  incomplete <- !stats::complete.cases(
-    analysis[, c("USUBJID", "ACTARM", "AVAL", "AVALU", "CNSR")]
-  )
-  if (any(incomplete)) {
-    cli::cli_abort(
-      "Endpoint {.val {endpoint}} contains {sum(incomplete)} incomplete survival record{?s}.",
-      call = call
-    )
-  }
-  if (any(analysis$AVAL < 0)) {
-    cli::cli_abort(
-      "Endpoint {.val {endpoint}} contains negative time-to-event values.",
-      call = call
-    )
-  }
-  if (any(!analysis$CNSR %in% c(0L, 1L))) {
-    cli::cli_abort(
-      "Endpoint {.val {endpoint}} contains censoring values other than 0 and 1.",
-      call = call
-    )
-  }
-  if (anyDuplicated(analysis$USUBJID)) {
-    cli::cli_abort(
-      "Endpoint {.val {endpoint}} has more than one record for at least one subject.",
-      call = call
-    )
-  }
-
-  units <- unique(analysis$AVALU)
-  if (length(units) != 1) {
-    cli::cli_abort(
-      "Endpoint {.val {endpoint}} uses multiple time units: {.and {.val {units}}}.",
-      call = call
-    )
-  }
-
   list(
     data = analysis,
     endpoint = endpoint,
     endpoint_label = unname(.ae_tte_endpoint_labels[[endpoint]]),
+    free_label = unname(.ae_tte_free_labels[[endpoint]]),
     population = population,
-    unit = units[[1]]
+    unit = dplyr::first(analysis$AVALU)
   )
 }
 
@@ -132,38 +87,45 @@ km_curve_data <- function(fit, arms) {
     dplyr::arrange(.data[["treatment_arm"]], .data[["time"]])
 }
 
-km_median_data <- function(fit) {
-  fit_table <- as.data.frame(summary(fit)$table)
-  fit_table$treatment_arm <- sub("^ACTARM=", "", rownames(fit_table))
-  rownames(fit_table) <- NULL
 
-  dplyr::transmute(
-    fit_table,
-    treatment_arm = .data[["treatment_arm"]],
-    median_time = .data[["median"]],
-    median_ci_lower = .data[["0.95LCL"]],
-    median_ci_upper = .data[["0.95UCL"]]
+km_risk_data <- function(fit, arms, times) {
+  risk <- summary(fit, times = times, extend = TRUE)
+  data.frame(
+    time = risk$time,
+    n_risk = risk$n.risk,
+    treatment_arm = factor(
+      sub("^ACTARM=", "", as.character(risk$strata)),
+      levels = arms
+    )
   )
+}
+
+km_risk_times <- function(prepared, n = 4) {
+  times <- pretty(c(0, max(prepared$data$AVAL)), n = n)
+  unique(c(0, times[times >= 0 & times <= max(prepared$data$AVAL)]))
 }
 
 #' Kaplan-Meier plot for time to first adverse event
 #'
 #' @description
-#' Kaplan-Meier estimate of the probability of remaining event-free over time,
-#' by actual treatment arm, with log-log 95% confidence intervals and censoring
-#' marks. Uses one subject-level record per endpoint from adaette, where CNSR = 0
-#' indicates an event and CNSR = 1 indicates censoring.
+#' Kaplan-Meier estimate of the probability of remaining free of the selected
+#' adverse-event endpoint, by actual treatment arm, with log-log 95% confidence
+#' intervals, censoring marks, and numbers of patients at risk. This is an
+#' adverse-event event-free analysis, not overall survival. Uses one
+#' subject-level record per endpoint from adaette, where CNSR = 0 indicates an
+#' event and CNSR = 1 indicates censoring.
 #'
 #' @param endpoint `enum[AETTE1, AETTE2, AETTE3]` Adverse-event endpoint:
 #'   first adverse event, first serious adverse event, or first Grade 3-5
 #'   adverse event. Defaults to AETTE1.
 #' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
 #'   intent-to-treat (ITTFL). Defaults to safety.
-#' @return A Kaplan-Meier `ggplot` with one event-free curve per actual treatment
-#'   arm, log-log 95% confidence intervals, and censoring marks.
+#' @return A Kaplan-Meier `ggplot` with one AE-free curve per actual treatment
+#'   arm, log-log 95% confidence intervals, censoring marks, and a numbers-
+#'   at-risk table.
 #' @provenance https://doi.org/10.1080/01621459.1958.10501452
 #' @measure
-ae_time_to_event_plot <- function(
+ae_event_free_plot <- function(
   endpoint = c("AETTE1", "AETTE2", "AETTE3"),
   population = c("SAF", "ITT"),
   adsl = adam_data()$adsl,
@@ -175,12 +137,27 @@ ae_time_to_event_plot <- function(
   curve_data <- km_curve_data(fit, arms)
   censor_data <- dplyr::filter(curve_data, .data[["n_censor"]] > 0)
 
+  risk_times <- km_risk_times(prepared)
+  risk_data <- km_risk_data(fit, arms, risk_times)
+  risk_rows <- data.frame(
+    treatment_arm = factor(arms, levels = arms),
+    risk_y = -0.14 - 0.08 * (seq_along(arms) - 1)
+  )
+  risk_data <- dplyr::left_join(
+    risk_data,
+    risk_rows,
+    by = "treatment_arm"
+  )
+  risk_floor <- min(risk_rows$risk_y) - 0.06
+  time_limits <- c(0, max(curve_data$time, risk_times))
+  unit_label <- paste0("Time (", tolower(prepared$unit), ")")
+
   ggplot2::ggplot(
     curve_data,
     ggplot2::aes(
       x = .data[["time"]],
       y = .data[["survival"]],
-      group = .data[["treatment_arm"]]
+      colour = .data[["treatment_arm"]]
     )
   ) +
     ggplot2::geom_ribbon(
@@ -192,81 +169,72 @@ ae_time_to_event_plot <- function(
       alpha = 0.12,
       colour = NA
     ) +
-    ggplot2::geom_step(
-      ggplot2::aes(colour = .data[["treatment_arm"]]),
-      linewidth = 0.8
-    ) +
+    ggplot2::geom_step(linewidth = 0.8) +
     ggplot2::geom_point(
       data = censor_data,
-      ggplot2::aes(colour = .data[["treatment_arm"]]),
       shape = 3,
       size = 2
     ) +
+    ggplot2::geom_hline(yintercept = -0.04, colour = "grey80") +
+    ggplot2::geom_text(
+      data = risk_data,
+      ggplot2::aes(
+        x = .data[["time"]],
+        y = .data[["risk_y"]],
+        label = .data[["n_risk"]],
+        colour = .data[["treatment_arm"]]
+      ),
+      inherit.aes = FALSE,
+      size = 3.2,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_text(
+      data = risk_rows,
+      ggplot2::aes(
+        x = -Inf,
+        y = .data[["risk_y"]],
+        label = .data[["treatment_arm"]],
+        colour = .data[["treatment_arm"]]
+      ),
+      inherit.aes = FALSE,
+      hjust = 1.3,
+      size = 3.2,
+      show.legend = FALSE
+    ) +
+    ggplot2::annotate(
+      "text",
+      x = -Inf,
+      y = -0.08,
+      label = "Numbers at risk",
+      hjust = 1.3,
+      fontface = "bold",
+      size = 3.2
+    ) +
     ggplot2::scale_y_continuous(
-      limits = c(0, 1),
+      limits = c(risk_floor, 1),
+      breaks = seq(0, 1, by = 0.25),
       labels = scales::label_percent(),
       expand = ggplot2::expansion(mult = c(0, 0.02))
     ) +
-    ggplot2::guides(
-      colour = ggplot2::guide_legend(title = "Actual treatment arm"),
-      fill = "none"
+    ggplot2::scale_x_continuous(
+      breaks = risk_times,
+      limits = time_limits,
+      expand = ggplot2::expansion(mult = c(0.02, 0.02))
     ) +
+    ggplot2::guides(colour = "none", fill = "none") +
     ggplot2::labs(
-      title = paste("Kaplan-Meier:", prepared$endpoint_label),
+      title = paste("Kaplan-Meier:", prepared$free_label),
       subtitle = paste0(
         population_label(prepared$population),
         " population; adaette PARAMCD = ",
         prepared$endpoint
       ),
-      x = paste0("Time (", tolower(prepared$unit), ")"),
-      y = "Event-free probability"
-    )
-}
-
-#' Kaplan-Meier summary for time to first adverse event
-#'
-#' @description
-#' Subject, event, and censoring counts plus the Kaplan-Meier median event-free
-#' time and its log-log 95% confidence interval, by actual treatment arm. A
-#' missing median or confidence bound means the estimate was not reached.
-#'
-#' @param endpoint `enum[AETTE1, AETTE2, AETTE3]` Adverse-event endpoint:
-#'   first adverse event, first serious adverse event, or first Grade 3-5
-#'   adverse event. Defaults to AETTE1.
-#' @param population `enum[SAF, ITT]` Analysis population: safety (SAFFL) or
-#'   intent-to-treat (ITTFL). Defaults to safety.
-#' @return A data frame with the endpoint, population, time unit, subject count,
-#'   event count, censoring count, and median event-free time with its 95%
-#'   confidence interval for each actual treatment arm.
-#' @provenance https://doi.org/10.1080/01621459.1958.10501452
-#' @measure
-ae_time_to_event_summary <- function(
-  endpoint = c("AETTE1", "AETTE2", "AETTE3"),
-  population = c("SAF", "ITT"),
-  adsl = adam_data()$adsl,
-  adaette = adam_data()$adaette
-) {
-  prepared <- prepare_ae_tte(endpoint, population, adsl, adaette)
-  fit <- fit_ae_km(prepared)
-
-  counts <- prepared$data |>
-    dplyr::group_by(.data[["ACTARM"]]) |>
-    dplyr::summarise(
-      subjects = dplyr::n(),
-      events = sum(.data[["CNSR"]] == 0),
-      censored = sum(.data[["CNSR"]] == 1),
-      .groups = "drop"
-    ) |>
-    dplyr::rename(treatment_arm = .data[["ACTARM"]]) |>
-    dplyr::mutate(treatment_arm = as.character(.data[["treatment_arm"]]))
-
-  counts |>
-    dplyr::left_join(km_median_data(fit), by = "treatment_arm") |>
-    dplyr::mutate(
-      endpoint = prepared$endpoint,
-      endpoint_label = prepared$endpoint_label,
-      population = prepared$population,
-      time_unit = prepared$unit,
-      .before = 1
+      x = unit_label,
+      y = prepared$free_label
+    ) +
+    ggplot2::coord_cartesian(clip = "off") +
+    ggplot2::theme(
+      panel.grid.minor = ggplot2::element_blank(),
+      plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 105)
     )
 }
