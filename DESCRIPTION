@@ -33,6 +33,6 @@ Suggests:
     testthat (>= 3.0.0)
 Remotes:
     posit-dev/commons/pkg-r@6a43f1cb31fd5adc29f2c18cb7037f80c38d8dc5,
-    posit-dev/shinychat/pkg-r@369600e780dbbb2c6be82edeca92fead8347fb14,
+    posit-dev/shinychat/pkg-r@826c799994c32611629236bbc73516dbc14ff2ab,
     tidyverse/ellmer@19be478ebf1a2e5d2db96a8aeaca71592c8d3f26
 Config/testthat/edition: 3
