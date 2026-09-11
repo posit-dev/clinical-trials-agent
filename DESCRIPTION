@@ -1,11 +1,11 @@
 Package: tlgagent
-Title: A commons Example Agent for Clinical-Trial TLG
+Title: Clinical Trials Agent
 Version: 0.0.0.9000
 Description: A publicly available example of a commons self-service data
-    agent for the pharma clinical-trials space. It answers safety and
-    compliance questions about a study by running validated Tables,
-    Listings, and Graphs recipes from the insightsengineering/tlg-catalog
-    over CDISC ADaM sample data from random.cdisc.data.
+    agent for clinical trials. It answers questions about a simulated clinical
+    study by running trusted Tables, Listings, and Graphs recipes adapted from
+    insightsengineering/tlg-catalog and governed SQL over synthetic CDISC ADaM
+    data from random.cdisc.data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:
@@ -25,13 +25,14 @@ Imports:
     scales,
     shiny,
     shinychat,
+    survival,
     tern,
     yaml
 Suggests:
     otelsdk,
     testthat (>= 3.0.0)
 Remotes:
-    posit-dev/commons/pkg-r@a83c01285d3e61dfb08ed44397d436d938dc9608,
-    posit-dev/shinychat/pkg-r@e92e7c254a2a7e2b1949840d195daf7af18e316d,
-    tidyverse/ellmer@HEAD
+    posit-dev/commons/pkg-r@6a43f1cb31fd5adc29f2c18cb7037f80c38d8dc5,
+    posit-dev/shinychat/pkg-r@826c799994c32611629236bbc73516dbc14ff2ab,
+    tidyverse/ellmer@19be478ebf1a2e5d2db96a8aeaca71592c8d3f26
 Config/testthat/edition: 3

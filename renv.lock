@@ -4870,7 +4870,7 @@
     },
     "shinychat": {
       "Package": "shinychat",
-      "Version": "0.4.0.9000",
+      "Version": "0.5.0",
       "Source": "GitHub",
       "Title": "Chat UI Component for 'shiny'",
       "Authors@R": "c( person(\"Joe\", \"Cheng\", , \"joe@posit.co\", role = \"aut\"), person(\"Carson\", \"Sievert\", , \"carson@posit.co\", role = \"aut\"), person(\"Garrick\", \"Aden-Buie\", , \"garrick@adenbuie.com\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-7111-0077\")), person(\"Barret\", \"Schloerke\", , \"barret@posit.co\", role = \"aut\", comment = c(ORCID = \"0000-0001-9986-114X\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"), comment = c(ROR = \"03wc8by49\")) )",
@@ -4899,11 +4899,13 @@
         "covr",
         "knitr",
         "later",
+        "rmarkdown",
         "shinytest2",
         "testthat (>= 3.0.0)",
         "withr"
       ],
-      "Config/Needs/website": "tidyverse/tidytemplate, rmarkdown, weathR, gt, glue, bsicons",
+      "VignetteBuilder": "knitr, rmarkdown",
+      "Config/Needs/website": "tidyverse/tidytemplate, rmarkdown, weathR, gt, glue, bsicons, reactable, htmlwidgets",
       "Config/roxygen2/version": "8.1.0",
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
@@ -4916,7 +4918,7 @@
       "RemoteRepo": "shinychat",
       "RemoteSubdir": "pkg-r",
       "RemoteRef": "main",
-      "RemoteSha": "369600e780dbbb2c6be82edeca92fead8347fb14"
+      "RemoteSha": "826c799994c32611629236bbc73516dbc14ff2ab"
     },
     "sourcetools": {
       "Package": "sourcetools",
@@ -5018,11 +5020,9 @@
     },
     "survival": {
       "Package": "survival",
-      "Version": "3.8-9",
+      "Version": "3.8-12",
       "Source": "Repository",
-      "Title": "Survival Analysis",
       "Priority": "recommended",
-      "Date": "2026-07-07",
       "Depends": [
         "R (>= 4.1.0)"
       ],
@@ -5034,17 +5034,22 @@
         "stats",
         "utils"
       ],
-      "LazyData": "Yes",
-      "LazyDataCompression": "xz",
-      "ByteCompile": "Yes",
-      "Authors@R": "c(person(c(\"Terry\", \"M\"), \"Therneau\", email=\"terry.therneau@proton.me\", role=c(\"aut\", \"cre\")), person(\"Thomas\", \"Lumley\", role=c(\"ctb\", \"trl\"), comment=\"original S->R port and R maintainer until 2009\"), person(\"Atkinson\", \"Elizabeth\", role=\"ctb\"), person(\"Crowson\", \"Cynthia\", role=\"ctb\"))",
-      "Description": "Contains the core survival analysis routines, including definition of Surv objects,  Kaplan-Meier and Aalen-Johansen (multi-state) curves, Cox models, and parametric accelerated failure time models.",
+      "LinkingTo": [
+        null
+      ],
+      "Suggests": [
+        null
+      ],
+      "Enhances": [
+        null
+      ],
       "License": "LGPL (>= 2)",
-      "URL": "https://github.com/therneau/survival",
+      "License_is_FOSS": null,
+      "License_restricts_use": null,
+      "OS_type": null,
       "NeedsCompilation": "yes",
-      "Author": "Terry M Therneau [aut, cre], Thomas Lumley [ctb, trl] (original S->R port and R maintainer until 2009), Atkinson Elizabeth [ctb], Crowson Cynthia [ctb]",
-      "Maintainer": "Terry M Therneau <terry.therneau@proton.me>",
-      "Repository": "CRAN"
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "sys": {
       "Package": "sys",

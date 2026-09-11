@@ -10,7 +10,7 @@ sources:
 
 # Study conventions
 
-This is a single simulated oncology study from `random.cdisc.data`, used as a
+This is a single simulated clinical study from `random.cdisc.data`, used as a
 public example: synthetic, analysis-ready ADaM data — not a live, unlocked
 trial — so there is no data-cut or freshness caveat, and no unblinding data or
 patient identifiers beyond the subject id (`USUBJID`).
