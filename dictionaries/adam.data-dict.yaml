@@ -6,12 +6,13 @@ label: Study ADaM datasets
 description: >-
   CDISC ADaM analysis datasets for a single simulated clinical study with three
   treatment arms (A: Drug X, B: Placebo, C: Combination), from
-  random.cdisc.data. Five tables: subject level (adsl), adverse events (adae),
-  drug exposure (adex), laboratory results (adlb), and adverse-event
-  time-to-event and event-count parameters (adaette). For standard safety,
-  disposition, exposure, demography, and laboratory summaries, prefer the
-  trusted measures in the semantic layer; use SQL over these tables for ad-hoc
-  questions the measures do not cover.
+  random.cdisc.data. Six tables: subject level (adsl), adverse events (adae),
+  drug exposure (adex), laboratory results (adlb), adverse-event time-to-event
+  and event-count parameters (adaette), and efficacy time-to-event endpoints
+  (adtte). For standard safety, efficacy, disposition, exposure, demography,
+  and laboratory summaries, prefer the trusted measures in the semantic
+  layer; use SQL over these tables for ad-hoc questions the measures do not
+  cover.
 details: >-
   Rules that span the tables. Analysis population is defined on adsl by SAFFL
   (safety) and ITTFL (intent-to-treat); in this simulated study every subject is
@@ -21,9 +22,10 @@ details: >-
   denormalized copy of many adsl subject-level fields (demographics, arm, flags,
   biomarkers); those copies are the same value repeated on every child row, so
   read them directly rather than joining back to adsl, and never join on them
-  (see relationships/conflicts). Treatment arm is ACTARM (actual) on every
-  table; ARM is the planned arm -- use ACTARM for as-treated analyses. The four
-  non-adsl tables have repeated rows per patient, so count patients with
+  (see relationships/conflicts). ARM is the planned arm and is used for
+  randomized efficacy analyses; ACTARM is the actual arm and is used for
+  as-treated safety analyses. The five non-adsl tables have repeated rows per
+  patient, so count patients with
   COUNT(DISTINCT USUBJID), not COUNT(*). Variables follow CDISC ADaM/SDTM
   conventions; adverse events are MedDRA-coded and NCI-CTCAE-graded, with
   seriousness per ICH E2A and analysis populations per ICH E9.
@@ -635,6 +637,62 @@ tables:
         description: Time-to-event records where the adverse event actually occurred (not censored).
         expr: CNSR = 0
 
+  - name: adtte
+    label: Efficacy Time-to-Event Analysis Dataset
+    description: >-
+      One row per subject per efficacy time-to-event endpoint. Supports
+      Kaplan-Meier summaries and plots for overall, progression-free, and
+      event-free survival. Carries denormalized subject-level fields from adsl.
+    columns:
+      - name: USUBJID
+        label: Unique Subject Identifier
+        type: string
+        constraints: [foreign_key]
+        examples: ["AB12345-CHN-1-id-307", "AB12345-USA-1-id-42"]
+      - name: PARAMCD
+        label: Parameter Code
+        type: enum
+        values:
+          OS: Overall Survival
+          PFS: Progression-Free Survival
+          EFS: Event-Free Survival
+          CRSD: Duration of Confirmed Response
+          TNE: Total Number of Exacerbations
+        details: >-
+          OS, PFS, EFS, and CRSD are time-to-event parameters. TNE is a count
+          parameter and must not be used for survival analysis.
+      - name: PARAM
+        label: Parameter
+        type: string
+        examples: ["Overall Survival", "Progression Free Survival"]
+      - name: AVAL
+        label: Analysis Value
+        type: number(quantity)
+        range: [0, .inf]
+        details: Time to event or censoring for time-to-event parameters.
+      - name: AVALU
+        label: Analysis Value Unit
+        type: enum
+        values: [DAYS]
+      - name: CNSR
+        label: Censor
+        type: number(id)
+        examples: [0, 1]
+        details: 0 means the event occurred; 1 means the record is censored.
+      - name: EVNTDESC
+        label: Event or Censoring Description
+        type: string
+        examples: ["Death", "Alive", "Disease Progression"]
+    definitions:
+      - name: tte_event
+        type: boolean
+        description: Time-to-event records where the event occurred.
+        expr: CNSR = 0
+      - name: overall_survival
+        type: boolean
+        description: Overall survival records.
+        expr: PARAMCD = 'OS'
+
 relationships:
   - join: adae.USUBJID = adsl.USUBJID
     cardinality: many-to-one
@@ -737,6 +795,31 @@ relationships:
       - ITTFL
       - AGE
       - DTHFL
+  - join: adtte.USUBJID = adsl.USUBJID
+    cardinality: many-to-one
+    description: >-
+      Each efficacy time-to-event record belongs to one subject. adtte carries
+      denormalized copies of the adsl columns below; read them from adtte
+      directly.
+    conflicts:
+      - SEX
+      - RACE
+      - ETHNIC
+      - COUNTRY
+      - REGION1
+      - ARM
+      - ARMCD
+      - ACTARM
+      - ACTARMCD
+      - TRT01A
+      - STRATA1
+      - STRATA2
+      - BMRKR1
+      - BMRKR2
+      - SAFFL
+      - ITTFL
+      - AGE
+      - DTHFL
 
 glossary:
   analysis population: >-
@@ -754,3 +837,6 @@ glossary:
   SOC: MedDRA System Organ Class, the broad level of the AE coding hierarchy (AEBODSYS).
   preferred term: MedDRA Preferred Term (AEDECOD), the specific AE term below the SOC.
   grade: NCI-CTCAE toxicity grade (AETOXGR), 1 (mild) to 5 (death); 3-5 is the usual high-grade cutoff.
+  time-to-event endpoint: >-
+    An outcome defined by the time until an event or censoring. In adtte,
+    CNSR = 0 indicates an event and CNSR = 1 indicates censoring.

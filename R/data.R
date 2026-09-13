@@ -9,7 +9,8 @@ adam_data <- local({
         adae = random.cdisc.data::cadae,
         adex = random.cdisc.data::cadex,
         adlb = random.cdisc.data::cadlb,
-        adaette = random.cdisc.data::cadaette
+        adaette = random.cdisc.data::cadaette,
+        adtte = random.cdisc.data::cadtte
       )
     }
     cache

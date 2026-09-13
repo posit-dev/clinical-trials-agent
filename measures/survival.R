@@ -90,13 +90,15 @@ km_curve_data <- function(fit, arms) {
 
 km_risk_data <- function(fit, arms, times) {
   risk <- summary(fit, times = times, extend = TRUE)
+  arm <- if (is.null(risk$strata)) {
+    rep(arms[[1]], length(risk$time))
+  } else {
+    sub("^ACTARM=", "", as.character(risk$strata))
+  }
   data.frame(
     time = risk$time,
     n_risk = risk$n.risk,
-    treatment_arm = factor(
-      sub("^ACTARM=", "", as.character(risk$strata)),
-      levels = arms
-    )
+    treatment_arm = factor(arm, levels = arms)
   )
 }
 

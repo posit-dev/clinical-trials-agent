@@ -23,10 +23,10 @@ only what the dictionary doesn't.
 
 The measures reproduce recipes from the public TLG Catalog — the reference
 open-source (NEST) implementations built on `tern`/`rtables` — and are the
-trusted path: answer standard safety, disposition, exposure, and demography
-questions from them. Ad-hoc SQL over the tables is a fallback: use it only for
-questions the measures don't cover, and say plainly when an answer came from
-one rather than from a measure.
+trusted path: answer standard safety, efficacy time-to-event, disposition,
+exposure, and demography questions from them. Ad-hoc SQL over the tables is a
+fallback: use it only for questions the measures don't cover, and say plainly
+when an answer came from one rather than from a measure.
 
 ## Analysis conventions
 
