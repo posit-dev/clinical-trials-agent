@@ -7,14 +7,13 @@ source("agent.R")
 addResourcePath("assets", "assets")
 
 welcome_message <- paste(
-  "Ask **Clinical Trials Agent** about a clinical study's safety, disposition,",
-  "exposure, demographics, and laboratory results. Answers use trusted measures",
-  "or governed SQL over simulated CDISC ADaM data.\n\n",
+  "Ask **Clinical Trials Agent** about a simulated clinical study's safety, efficacy,",
+  "survival, disposition, exposure, demographics, and laboratory results.",
   "Here are some example questions:\n\n",
 
   "- <span class='suggestion'>Show an adverse event overview by treatment arm.</span>\n",
-  "- <span class='suggestion'>Summarize patient disposition for the safety population.</span>\n",
-  "- <span class='suggestion'>What are the demographics of the study population?</span>\n"
+  "- <span class='suggestion'>Show a Kaplan-Meier plot of overall survival by treatment arm.</span>\n",
+  "- <span class='suggestion'>Summarize patient disposition for the safety population.</span>\n"
 )
 
 ui <- shinychat::page_chat(

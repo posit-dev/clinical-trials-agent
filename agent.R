@@ -14,6 +14,7 @@ new_tlg_agent <- function() {
         adex = adam$adex,
         adlb = adam$adlb,
         adaette = adam$adaette,
+        adtte = adam$adtte,
         dictionary = "dictionaries/adam.data-dict.yaml"
       )
     ),

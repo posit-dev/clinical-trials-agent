@@ -3,7 +3,8 @@
 Clinical Trials Agent is an example
 [commons](https://github.com/posit-dev/commons) self-service data agent for
 clinical trials. It answers questions about a simulated clinical study's
-safety, disposition, exposure, demographics, and laboratory results.
+safety, efficacy time-to-event endpoints, disposition, exposure, demographics,
+and laboratory results.
 
 The agent first tries to answer questions with measures: trusted calculations
 that reproduce or adapt recipes from the
@@ -11,11 +12,11 @@ that reproduce or adapt recipes from the
 questions outside measure coverage, it can run governed SQL over the study's
 CDISC ADaM datasets.
 
-**[Try Clinical Trials Agent](https://connect.posit.cloud/posit/content/01a04163-015f-f8f9-6f2a-af6d9a33e572)**
+**[Try it out](https://connect.posit.cloud/posit/content/01a04163-015f-f8f9-6f2a-af6d9a33e572)**
 
-> [!NOTE]
-> This app uses synthetic sample data and is intended for demonstration only.
-> It contains no real patient data.
+![Clinical Trials Agent welcome screen with example clinical-study questions](assets/clinical-trials-agent.png)
+
+**Note:** This app uses synthetic sample data and is intended for demonstration only. It contains no real patient data.
 
 ## Run locally
 
@@ -46,6 +47,10 @@ of the data.
 Standard questions are answered by measures; anything a measure doesn't cover
 falls back to governed SQL over the ADaM datasets.
 
+The semantic layer currently contains 26 measures: 15 tables, 4 listings, and
+7 graphs. Coverage is intentionally selective and uses the parts of the
+synthetic data that behave realistically.
+
 **Adverse events - the full table and listing family** (the agent's safety focus):
 
 | Catalog | Measure |
@@ -74,7 +79,14 @@ falls back to governed SQL over the ADaM datasets.
 | DTHT01 | `deaths` |
 | LBT04 | `lab_abnormalities` |
 
-**Graphs - rendered directly by measures:**
+**Efficacy time-to-event:**
+
+| Catalog | Measure |
+|---|---|
+| TTET01 | `survival_summary` |
+| KMG01 | `survival_km_plot` |
+
+**Graphs and survival curves - rendered directly by measures:**
 
 | Catalog | Measure |
 |---|---|
@@ -83,10 +95,11 @@ falls back to governed SQL over the ADaM datasets.
 | BWG01 | `age_by_arm_plot` |
 | BWG01 | `lab_by_arm_plot` |
 | MNG01 | `lab_over_time_plot` |
+| Kaplan-Meier | `ae_event_free_plot` |
 
 ## Data
 
-The agent exposes five synthetic analysis datasets from
+The agent exposes six synthetic analysis datasets from
 [`random.cdisc.data`](https://insightsengineering.github.io/random.cdisc.data/):
 
 | Dataset | Contents |
@@ -96,6 +109,7 @@ The agent exposes five synthetic analysis datasets from
 | `adex` | Study drug exposure |
 | `adlb` | Laboratory results |
 | `adaette` | Adverse-event time-to-event and event-count parameters |
+| `adtte` | Efficacy time-to-event endpoints, including OS, PFS, and EFS |
 
 ## Attribution
 
