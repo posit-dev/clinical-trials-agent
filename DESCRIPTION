@@ -10,6 +10,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:
     bslib,
+    bsicons,
     cli,
     commons (>= 0.1.0.9000),
     DBI,
@@ -33,6 +34,5 @@ Suggests:
     testthat (>= 3.0.0)
 Remotes:
     posit-dev/commons/pkg-r@01f4e9b632dbf010fe42e835b0e115afa77905b3,
-    posit-dev/shinychat/pkg-r@826c799994c32611629236bbc73516dbc14ff2ab,
-    tidyverse/ellmer@a6f26f573d37bbb67b4f1aedad8867296af9f99f
+    posit-dev/shinychat/pkg-r@826c799994c32611629236bbc73516dbc14ff2ab
 Config/testthat/edition: 3

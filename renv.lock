@@ -803,6 +803,40 @@
       "Maintainer": "Emil Hvitfeldt <emil.hvitfeldt@posit.co>",
       "Repository": "CRAN"
     },
+    "bsicons": {
+      "Package": "bsicons",
+      "Version": "0.1.2",
+      "Source": "Repository",
+      "Title": "Easily Work with 'Bootstrap' Icons",
+      "Authors@R": "c( person(\"Carson\", \"Sievert\", , \"carson@posit.co\", role = c(\"cre\", \"aut\"), comment = c(ORCID = \"0000-0002-4958-2844\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")), person(\"Mark\", \"Otto\", role = \"cph\", comment = \"Bootstrap icons maintainer\") )",
+      "Description": "Easily use 'Bootstrap' icons inside 'Shiny' apps and 'R Markdown' documents. More generally, icons can be inserted in any 'htmltools' document through inline 'SVG'.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://github.com/rstudio/bsicons",
+      "BugReports": "https://github.com/rstudio/bsicons/issues",
+      "Depends": [
+        "R (>= 2.10)"
+      ],
+      "Imports": [
+        "cli",
+        "htmltools",
+        "rlang",
+        "utils"
+      ],
+      "Suggests": [
+        "bslib",
+        "processx",
+        "testthat",
+        "webshot2",
+        "withr"
+      ],
+      "Config/testthat/edition": "3",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.2.3",
+      "NeedsCompilation": "no",
+      "Author": "Carson Sievert [cre, aut] (<https://orcid.org/0000-0002-4958-2844>), Posit Software, PBC [cph, fnd], Mark Otto [cph] (Bootstrap icons maintainer)",
+      "Maintainer": "Carson Sievert <carson@posit.co>",
+      "Repository": "CRAN"
+    },
     "bslib": {
       "Package": "bslib",
       "Version": "0.12.0",
@@ -1725,7 +1759,7 @@
     "ellmer": {
       "Package": "ellmer",
       "Version": "0.5.0",
-      "Source": "GitHub",
+      "Source": "Repository",
       "Title": "Chat with Large Language Models",
       "Authors@R": "c( person(\"Hadley\", \"Wickham\", , \"hadley@posit.co\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0003-4757-117X\")), person(\"Joe\", \"Cheng\", role = \"aut\"), person(\"Aaron\", \"Jacobs\", role = \"aut\"), person(\"Garrick\", \"Aden-Buie\", , \"garrick@posit.co\", role = \"aut\", comment = c(ORCID = \"0000-0002-7111-0077\")), person(\"Barret\", \"Schloerke\", , \"barret@posit.co\", role = \"aut\", comment = c(ORCID = \"0000-0001-9986-114X\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"), comment = c(ROR = \"03wc8by49\")) )",
       "Description": "Chat with large language models from a range of providers including 'Claude' <https://claude.ai>, 'OpenAI' <https://chatgpt.com>, and more. Supports streaming, asynchronous calls, tool calling, and structured data extraction.",
@@ -1777,16 +1811,11 @@
       "Config/testthat/parallel": "true",
       "Config/testthat/start-first": "chat, provider*",
       "Encoding": "UTF-8",
-      "Roxygen": "list(markdown = TRUE)",
       "Collate": "'utils-S7.R' 'types.R' 'ellmer-package.R' 'tools-def.R' 'content.R' 'provider.R' 'as-json.R' 'batch-chat.R' 'chat-structured.R' 'chat-tools-content.R' 'turns.R' 'chat-tools.R' 'chat-utils.R' 'utils-coro.R' 'chat.R' 'files.R' 'content-document.R' 'content-image.R' 'content-pdf.R' 'content-replay.R' 'httr2.R' 'import-standalone-defer.R' 'import-standalone-obj-type.R' 'import-standalone-purrr.R' 'import-standalone-types-check.R' 'interpolate.R' 'live.R' 'model.R' 'otel.R' 'parallel-chat.R' 'params.R' 'prices.R' 'provider-any.R' 'provider-aws-api.R' 'provider-openai-compatible.R' 'provider-openai.R' 'provider-claude.R' 'provider-aws.R' 'provider-azure.R' 'provider-claude-files.R' 'provider-claude-tools.R' 'provider-google.R' 'provider-cloudflare.R' 'provider-databricks.R' 'provider-deepseek.R' 'provider-github.R' 'provider-google-tools.R' 'provider-google-upload.R' 'provider-groq.R' 'provider-huggingface.R' 'provider-lmstudio.R' 'provider-mistral.R' 'provider-ollama.R' 'provider-openai-tools.R' 'provider-openrouter.R' 'provider-perplexity.R' 'provider-portkey.R' 'provider-posit.R' 'provider-snowflake.R' 'provider-vllm.R' 'rounds.R' 'schema.R' 'stream-controller.R' 'tokens.R' 'tool-context.R' 'tools-built-in.R' 'tools-def-auto.R' 'utils-auth.R' 'utils-callbacks.R' 'utils-cat.R' 'utils-merge.R' 'utils-prettytime.R' 'utils.R' 'zzz.R'",
+      "NeedsCompilation": "no",
       "Author": "Hadley Wickham [aut, cre] (ORCID: <https://orcid.org/0000-0003-4757-117X>), Joe Cheng [aut], Aaron Jacobs [aut], Garrick Aden-Buie [aut] (ORCID: <https://orcid.org/0000-0002-7111-0077>), Barret Schloerke [aut] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteUsername": "tidyverse",
-      "RemoteRepo": "ellmer",
-      "RemoteRef": "a6f26f573d37bbb67b4f1aedad8867296af9f99f",
-      "RemoteSha": "a6f26f573d37bbb67b4f1aedad8867296af9f99f"
+      "Repository": "CRAN"
     },
     "emmeans": {
       "Package": "emmeans",
