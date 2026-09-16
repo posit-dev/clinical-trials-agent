@@ -30,11 +30,17 @@ install.packages("renv")
 renv::restore()
 ```
 
-Set the API key and start the Shiny app:
+Set an Anthropic API key in your `.Renviron` (or edit [this line](https://github.com/posit-dev/clinical-trials-agent/blob/8b6e50617d96c2fb9ab0639354b3c3e1c06e8997/agent.R#L9) locally to use a different provider) and start the Shiny app.
 
-```sh
-export ANTHROPIC_API_KEY="your-key"
-R -e 'shiny::runApp()'
+```
+# Add your API key to your .Renviron
+ANTHROPIC_API_KEY="your-key"
+```
+
+Then, restart your R session before running:
+
+```r
+shiny::runApp()
 ```
 
 The main application is in `app.R`. `agent.R` configures the model and commons
