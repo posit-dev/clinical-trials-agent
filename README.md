@@ -20,7 +20,7 @@ CDISC ADaM datasets.
 
 ## Run locally
 
-The project uses R 4.6.1 and
+The project uses 
 [`renv`](https://rstudio.github.io/renv/) for reproducible dependencies. You
 also need an [Anthropic API key](https://console.anthropic.com/settings/keys)
 for the model configured in `agent.R`.
