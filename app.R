@@ -2,10 +2,9 @@ library(shiny)
 library(bslib)
 library(commons)
 
-addResourcePath("assets", "assets")
+source("agent.R")
 
-repository_url <- "https://github.com/posit-dev/tlg-agent"
-commons_repository_url <- "https://github.com/posit-dev/commons"
+addResourcePath("assets", "assets")
 
 welcome_message <- paste(
   "Ask **Clinical Trials Agent** about a simulated clinical study's safety, efficacy,",
@@ -40,37 +39,12 @@ ui <- shinychat::page_chat(
 )
 
 server <- function(input, output, session) {
-  showModal(
-    modalDialog(
-      tags$p(
-        "This demo ",
-        tags$a(
-          "commons",
-          href = commons_repository_url,
-          target = "_blank",
-          rel = "noopener noreferrer"
-        ),
-        " agent is no longer connected to a model provider."
-      ),
-      tags$p(
-        "If you want to try it out, clone the ",
-        tags$a(
-          "repository",
-          href = repository_url,
-          target = "_blank",
-          rel = "noopener noreferrer"
-        ),
-        " and supply your own API key!"
-      ),
-      footer = tags$a(
-        "View the source code",
-        href = repository_url,
-        target = "_blank",
-        rel = "noopener noreferrer",
-        class = "btn btn-primary"
-      ),
-      size = "l",
-      easyClose = FALSE
+  commons_server(
+    "chat",
+    new_tlg_agent(),
+    history = shinychat::history_options(
+      store = "memory",
+      title = NULL
     )
   )
 }
