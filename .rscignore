@@ -1,4 +1,4 @@
 .claude
+.posit
 *.duckdb
 *.duckdb.wal
-.Rprofile
