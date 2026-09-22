@@ -2,4 +2,3 @@
 *.duckdb
 *.duckdb.wal
 .Rprofile
-renv

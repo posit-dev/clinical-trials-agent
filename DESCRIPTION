@@ -10,7 +10,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:
     bslib,
-    bsicons,
+    bsicons (>= 0.1.2),
     cli,
     commons (>= 0.1.0.9000),
     DBI,
@@ -25,7 +25,7 @@ Imports:
     rtables,
     scales,
     shiny,
-    shinychat,
+    shinychat (>= 0.5.0.9000),
     survival,
     tern,
     yaml
@@ -33,6 +33,6 @@ Suggests:
     otelsdk,
     testthat (>= 3.0.0)
 Remotes:
-    posit-dev/commons/pkg-r@01f4e9b632dbf010fe42e835b0e115afa77905b3,
-    posit-dev/shinychat/pkg-r@826c799994c32611629236bbc73516dbc14ff2ab
+    posit-dev/commons/pkg-r@2401ef41126b13b25d107ace977c48b56b42c4a8,
+    posit-dev/shinychat/pkg-r@fc50706f914290bceba5ccf6712a83af38e00ede
 Config/testthat/edition: 3

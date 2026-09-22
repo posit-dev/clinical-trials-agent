@@ -12,6 +12,4 @@ if (nzchar(Sys.getenv("CONNECT_CONTENT_GUID"))) {
     ),
     OTEL_R_EXPORTER_OTLP_SSL_INSECURE_SKIP_VERIFY = "true"
   )
-} else {
-  source("renv/activate.R")
 }

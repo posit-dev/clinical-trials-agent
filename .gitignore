@@ -21,6 +21,9 @@
 # RStudio files
 .Rproj.user/
 
+# Posit Assistant settings
+.posit/assistant/settings.json
+
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
