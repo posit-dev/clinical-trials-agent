@@ -28,14 +28,11 @@ versions, including the pinned development versions of `commons` and
 configured in `agent.R`.
 
 ```r
+# `remotes` is used temporarily because
+# [`pak` 0.11.1 cannot install some current macOS CRAN binaries](https://github.com/r-lib/pak/issues/915)
 install.packages("remotes")
 remotes::install_deps(dependencies = TRUE, upgrade = "always")
 ```
-
-`remotes` is used temporarily because
-[`pak` 0.11.1 cannot install some current macOS CRAN binaries](https://github.com/r-lib/pak/issues/915).
-Once that issue is fixed, this can return to
-`pak::local_install_dev_deps(upgrade = TRUE)`.
 
 Set an Anthropic API key in your `.Renviron` (or edit [this line](https://github.com/posit-dev/clinical-trials-agent/blob/8b6e50617d96c2fb9ab0639354b3c3e1c06e8997/agent.R#L9) locally to use a different provider) and start the Shiny app.
 
