@@ -12,8 +12,6 @@ that reproduce or adapt recipes from the
 questions outside measure coverage, it can run governed SQL over the study's
 CDISC ADaM datasets.
 
-**[Try it out](https://posit-clinical-trials-agent.share.connect.posit.cloud/)**
-
 ![Clinical Trials Agent welcome screen with example clinical-study questions](assets/clinical-trials-agent.png)
 
 **Note:** This app uses synthetic sample data and is intended for demonstration only. It contains no real patient data.
