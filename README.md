@@ -12,7 +12,7 @@ that reproduce or adapt recipes from the
 questions outside measure coverage, it can run governed SQL over the study's
 CDISC ADaM datasets.
 
-**[Try it out](https://connect.posit.cloud/posit/content/01a04163-015f-f8f9-6f2a-af6d9a33e572)**
+**[Try it out](https://posit-clinical-trials-agent.share.connect.posit.cloud/)**
 
 ![Clinical Trials Agent welcome screen with example clinical-study questions](assets/clinical-trials-agent.png)
 
